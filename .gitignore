@@ -1,0 +1,51 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+.kotlin/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Локальные настройки: путь к SDK, личные свойства
+local.properties
+
+# Сборки
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+release/
+
+# Ключи подписи и секреты — только вне репозитория
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+google-services.json
+
+# Логи и временные файлы
+*.log
+*.hprof
+*.tmp
+*~
+*.swp
+.env
+.env.*
+
+# Claude Code: локальные настройки
+.claude/settings.local.json
