@@ -2,6 +2,7 @@ package io.github.chalexey.cashpet.core.model
 
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class SerializationTest {
@@ -19,6 +20,15 @@ class SerializationTest {
             tasks = mapOf("1.1" to TaskRecord("1.1", Topic.PURCHASES, Outcome.GOOD, 1)),
         )
         assertEquals(state, json.decodeFromString<GameState>(json.encodeToString(state)))
+    }
+
+    @Test
+    fun `в сохранении короткие имена источников, без имени пакета`() {
+        // Имя пакета в сохранении — мина: переименовали пакет, и старые сохранения не читаются
+        val text = json.encodeToString(GameState(transactions = TxSourceSamples.all.map { Transaction(1, it, 0, 0, 0, 0) }))
+        assertTrue("io.github" !in text, text)
+        val types = Regex(""""type":\s*"([^"]+)"""").findAll(text).map { it.groupValues[1] }.toList()
+        assertEquals(listOf("start_budget", "pocket_money", "task_reward", "job", "purchase", "deposit", "withdraw", "goal_purchase"), types)
     }
 
     @Test
@@ -55,4 +65,11 @@ class SerializationTest {
         assertEquals(75, config.stats.decayPct[Stat.SATIETY])
         assertEquals(NeedHint.FIRST_WEEK, config.needHint[Difficulty.HARD])
     }
+}
+
+private object TxSourceSamples {
+    val all = listOf(
+        TxSource.StartBudget, TxSource.PocketMoney, TxSource.TaskReward("0"), TxSource.Job("help_home"),
+        TxSource.Purchase("food_basic"), TxSource.Deposit, TxSource.Withdraw, TxSource.GoalPurchase("goal_house"),
+    )
 }

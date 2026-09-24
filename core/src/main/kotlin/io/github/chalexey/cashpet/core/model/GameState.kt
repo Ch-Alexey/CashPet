@@ -1,5 +1,6 @@
 package io.github.chalexey.cashpet.core.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 // Состояние игры — docs/08-контракты.md, раздел 3. Деньги — Int, в монетах.
@@ -78,16 +79,18 @@ data class WeekResult(
     val petReason: PetReason,
 )
 
+// Короткие имена в JSON сохранения: без них там полное имя класса с пакетом, и переименование
+// пакета или класса сломало бы все сохранения. Имена ниже не менять — это формат сохранения
 @Serializable
 sealed interface TxSource {
-    @Serializable data object StartBudget : TxSource
-    @Serializable data object PocketMoney : TxSource
-    @Serializable data class TaskReward(val taskId: String) : TxSource
-    @Serializable data class Job(val jobId: String) : TxSource
-    @Serializable data class Purchase(val itemId: String) : TxSource
-    @Serializable data object Deposit : TxSource
-    @Serializable data object Withdraw : TxSource
-    @Serializable data class GoalPurchase(val goalId: String) : TxSource  // из копилки, кошелёк не меняется
+    @Serializable @SerialName("start_budget") data object StartBudget : TxSource
+    @Serializable @SerialName("pocket_money") data object PocketMoney : TxSource
+    @Serializable @SerialName("task_reward") data class TaskReward(val taskId: String) : TxSource
+    @Serializable @SerialName("job") data class Job(val jobId: String) : TxSource
+    @Serializable @SerialName("purchase") data class Purchase(val itemId: String) : TxSource
+    @Serializable @SerialName("deposit") data object Deposit : TxSource
+    @Serializable @SerialName("withdraw") data object Withdraw : TxSource
+    @Serializable @SerialName("goal_purchase") data class GoalPurchase(val goalId: String) : TxSource  // из копилки, кошелёк не меняется
 }
 
 @Serializable

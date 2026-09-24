@@ -55,7 +55,7 @@ CI в GitHub Actions на каждый PR запускает тесты и со�
 
 | Путь | Что |
 | --- | --- |
-| [tools/econ_sim.py](tools/econ_sim.py) | Черновая модель экономики на Python — до появления симулятора в `core` |
+| [tools/econ_sim.py](tools/econ_sim.py) | Первая модель экономики на Python — **устарела**, источник правды теперь `./gradlew :content:simulate` |
 | [CLAUDE.md](CLAUDE.md) | Правила проекта для Claude Code |
 | `.gitignore` | Что не попадает в Git: сборки, настройки IDE, ключи подписи |
 | `.gitattributes` | Одинаковые окончания строк на Mac и Windows |

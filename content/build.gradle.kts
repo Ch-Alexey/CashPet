@@ -27,3 +27,14 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
+
+// Симулятор баланса для Ярика: ./gradlew :content:simulate — таблицы трёх сценариев по настоящим JSON
+tasks.register<JavaExec>("simulate") {
+    group = "cashpet"
+    description = "Баланс: 5 недель трёх сценариев по настоящему контенту, как в docs/02-экономика.md"
+    classpath = sourceSets["test"].runtimeClasspath
+    mainClass.set("io.github.chalexey.cashpet.content.SimulateKt")
+    workingDir = projectDir
+    // Кириллица в консоли Windows
+    jvmArgs("-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8")
+}
