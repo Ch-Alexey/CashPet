@@ -41,16 +41,18 @@ class AdultGateViewModel(private val random: Random = Random.Default) : ViewMode
         }
     }
 
-    // Без круглых десятков и множителей 1–2: 30 × 2 ребёнок решит в уме
+    // a — от 23, без круглых десятков и одинаковых цифр; b — от 4: 11 × 3, 30 × 2, 22 × 3 третьеклассник решит в уме
     private fun newExample(): AdultGateUiState {
         var a: Int
         do {
-            a = random.nextInt(11, 100)
-        } while (a % 10 == 0)
-        return AdultGateUiState(a = a, b = random.nextInt(3, 10))
+            a = random.nextInt(MIN_A, 100)
+        } while (a % 10 == 0 || a % 11 == 0)
+        return AdultGateUiState(a = a, b = random.nextInt(MIN_B, 10))
     }
 
     private companion object {
         const val MAX_ANSWER_LENGTH = 3
+        const val MIN_A = 23
+        const val MIN_B = 4
     }
 }

@@ -2,6 +2,8 @@ package io.github.chalexey.cashpet.content
 
 import io.github.chalexey.cashpet.core.engine.GameEngine
 import io.github.chalexey.cashpet.core.model.Difficulty
+import io.github.chalexey.cashpet.core.model.FeedbackReason
+import io.github.chalexey.cashpet.core.model.PetReason
 import io.github.chalexey.cashpet.core.model.EffectKey
 import io.github.chalexey.cashpet.core.model.PetLook
 import io.github.chalexey.cashpet.core.model.Profile
@@ -205,5 +207,48 @@ class ContentGuardTest {
         val spender = Autoplay.weeks(start, engine, SpenderStrategy(content.economy, content.catalog, goals), weeks = 5)
         assertTrue(spender.last().pet.stage <= Stage.TEEN, "транжира за 5 недель")
         assertTrue((reasonable + spender).all { it.balance >= 0 && it.savings.total >= 0 })
+    }
+
+    @Test
+    fun `фраза есть для каждой причины — иначе экран останется без текста`() {
+        // Новая причина в движке (как WISHLIST_REMOVED) без фразы в texts.json — красный тест, а не пустая панель
+        assertEquals(FeedbackReason.entries.toSet(), content.texts.feedback.keys, "texts.json → feedback_reasons")
+        assertEquals(PetReason.entries.toSet(), content.texts.petWeek.keys, "texts.json → pet_reasons.week")
+        assertEquals(PetReason.entries.toSet(), content.texts.petNow.keys, "texts.json → pet_reasons.now")
+    }
+
+    @Test
+    fun `неравенства баланса из раздела 19 рамок — на настоящей экономике`() {
+        // Те же проверки, что в tools/econ_sim.py и в таблице docs/02-экономика.md, но по настоящим JSON
+        val e = content.economy
+        val wants = content.catalog.items.filter { it.part == Part.WANT }.map { it.price }
+        val need = e.needMin                                                         // O — обязательное за неделю
+        val earned = content.catalog.tasks.filter { it.unlockWeek == 1 }.sumOf { it.rewardCoins } +
+            e.jobsPerWeek * e.jobReward                                              // заработок первой недели
+        val income = e.pocketMoney + earned                                          // I
+        val free = income - need                                                     // S
+        val goalAvg = content.catalog.goals.map { it.cost }.average()
+
+        // 8б: свободные монеты самой «богатой» недели разумной игры — с переносом остатка
+        val engine = GameEngine(e, content.catalog)
+        val start = engine.newGame(Profile("Тест", Difficulty.HARD), "Пончик", PetLook("fluffy", "ginger"))
+        val weeks = Autoplay.weeks(start, engine, ReasonableStrategy(e, content.catalog), weeks = 5)
+        val freeMax = weeks.mapIndexed { i, s ->
+            val r = s.history.last()
+            (if (i == 0) start else weeks[i - 1]).week.available + r.earned - r.factNeed
+        }.max()
+
+        val broken = buildList {
+            if (need * 10 !in income * 4..income * 6) add("1. O ≈ 0,5 · I: $need из $income")
+            if (wants.min() >= free) add("2. P_min < S: ${wants.min()} и $free")
+            if (wants.sum() < 3 * free) add("3. ΣP ≥ 3 · S: ${wants.sum()} и ${3 * free}")
+            if (2 * wants.max() <= free) add("4. P_max > 0,5 · S: ${wants.max()} и $free")
+            if (kotlin.math.abs(goalAvg - 1.75 * free) > 25) add("5. C_средняя ≈ 3,5 · 0,5 · S: $goalAvg и ${1.75 * free}")
+            // 6. U ≤ 0,8 · S — непредвиденный расход после 29.09, пластыря на витрине нет
+            if (earned * 10 !in income * 4..income * 6) add("7. заработок ≈ 0,4–0,6 · I: $earned из $income")
+            if (e.pocketMoney < need) add("8а. нет тупика, карманные ≥ O: ${e.pocketMoney} и $need")
+            if (wants.sum() < 2 * freeMax) add("8б. перенос, ΣP ≥ 2 · S_max: ${wants.sum()} и ${2 * freeMax}")
+        }
+        assertTrue(broken.isEmpty(), "Нарушены неравенства (docs/02-экономика.md):\n" + broken.joinToString("\n"))
     }
 }

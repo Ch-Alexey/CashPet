@@ -13,11 +13,11 @@ class AdultGateViewModelTest {
     private fun answer(): String = with(viewModel.uiState.value) { (a * b).toString() }
 
     @Test
-    fun `пример — двузначное без круглых десятков на однозначное от 3 до 9`() {
+    fun `пример — от 23 без круглых десятков и одинаковых цифр, на однозначное от 4 до 9`() {
         repeat(1000) { seed ->
             val state = AdultGateViewModel(Random(seed)).uiState.value
-            assertTrue("a = ${state.a}", state.a in 11..99 && state.a % 10 != 0)
-            assertTrue("b = ${state.b}", state.b in 3..9)
+            assertTrue("a = ${state.a}", state.a in 23..99 && state.a % 10 != 0 && state.a % 11 != 0)
+            assertTrue("b = ${state.b}", state.b in 4..9)
         }
     }
 

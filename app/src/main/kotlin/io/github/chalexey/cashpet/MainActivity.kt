@@ -48,5 +48,5 @@ fun SkeletonScreen(taskCount: Int) {
 @Preview(widthDp = 360)
 @Composable
 private fun SkeletonScreenPreview() {
-    MaterialTheme { SkeletonScreen(taskCount = 26) }
+    MaterialTheme { SkeletonScreen(taskCount = 7) }
 }
