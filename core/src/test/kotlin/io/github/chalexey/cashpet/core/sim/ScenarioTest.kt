@@ -95,6 +95,30 @@ class ScenarioTest {
     }
 
     @Test
+    fun `«Ускорить» посреди недели доигрывает её по плану, а не начинает заново`() {
+        // Демо: неделя 1 сыграна, на неделе 2 ведущий составил план, купил нужное и нажал «Ускорить»
+        val afterFirst = Autoplay.weeks(TestContent.newGame(), engine, ReasonableStrategy(economy, catalog), weeks = 1).last()
+        val midWeek = listOf(
+            Action.SetPlan(io.github.chalexey.cashpet.core.model.Plan(50, 35, 30)),
+            Action.ConfirmPlan,
+            Action.Buy("food_basic"),
+            Action.Buy("care_shampoo"),
+            Action.Deposit(10),
+        ).fold(afterFirst) { s, a -> (engine.apply(s, a) as Result.Ok).state }
+
+        val run = Autoplay.run(midWeek, engine, ReasonableStrategy(economy, catalog), Stage.ADULT)
+        val second = run.mapNotNull { it.feedback.weekResult }.first()
+
+        assertEquals(2, second.number)
+        assertEquals(50, second.factNeed)                  // нужное не куплено второй раз
+        assertTrue(second.factWant <= 35)                  // желаемое — в пределах плана
+        assertEquals(30, second.factSaved)                 // 10 уже было + 20 до плана
+        assertEquals(100, second.mPct)
+        assertEquals(100, second.gp)
+        assertEquals(Stage.ADULT, run.last().state.pet.stage)
+    }
+
+    @Test
     fun `баланс и копилка не уходят в минус ни при каких действиях`() {
         val random = kotlin.random.Random(2026)
         val ids = catalog.items.map { it.id }

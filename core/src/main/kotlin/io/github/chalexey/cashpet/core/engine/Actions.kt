@@ -35,6 +35,7 @@ sealed interface Rejection {
     data class NotEnoughSavings(val missing: Int) : Rejection
     data object NoActiveGoal : Rejection
     data class GoalNotReached(val missing: Int) : Rejection
+    data object GoalAlreadyBought : Rejection                    // мечту уже купили — выбрать её снова нельзя
     data object JobLimitReached : Rejection
     data object TaskClosed : Rejection
     data object InvalidAmount : Rejection                        // ≤ 0 или не кратно 5

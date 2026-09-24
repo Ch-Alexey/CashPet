@@ -137,26 +137,36 @@ abstract class BaseStrategy(
     }
 }
 
-/** Разумная игра: нужное = needMin, половина свободного — в копилку (не меньше минимума), остальное — желаемое. */
+/**
+ * Разумная игра: нужное = needMin, половина свободного — в копилку (не меньше минимума), остальное — желаемое.
+ *
+ * Доигрывает и начатую неделю — «Ускорить» в демо можно нажать посреди недели: план берётся уже
+ * подтверждённый, купленное нужное не покупается второй раз, желаемое и копилка — только на остаток плана.
+ */
 class ReasonableStrategy(economy: EconomyConfig, catalog: Catalog, goalOrder: List<String> = catalog.goals.map { it.id }) :
     BaseStrategy(economy, catalog, goalOrder) {
 
     override fun weekActions(state: GameState, engine: GameEngine): List<Action> {
         val week = Week(engine, state)
-        val available = state.week.available
-        val free = maxOf(0, available - economy.needMin)
-        val save = minOf(maxOf(economy.minSaveTarget, free / 2 / 5 * 5), free)
-        val plan = planOf(economy.needMin, free - save, save, available)
+        val plan = if (state.week.planConfirmed) state.week.plan ?: Plan() else newPlan(state.week.available)
         week.tryDo(Action.SetPlan(plan))
         week.tryDo(Action.ConfirmPlan)
         doOpenTasks(week, engine = engine)
         doJobs(week, economy.jobsPerWeek)
-        week.tryDo(Action.Buy(food.id))
-        week.tryDo(Action.Buy(care.id))
-        buyWants(week, plan.want)
-        save(week, plan.save)
+        if (week.state.week.foodPoints < economy.needFoodPoints) week.tryDo(Action.Buy(food.id))
+        if (week.state.week.carePoints < economy.needCarePoints) week.tryDo(Action.Buy(care.id))
+        buyWants(week, plan.want - week.state.week.spentWant)
+        // Не меньше минимума: иначе иконка «Копилка растёт» в демо горит наполовину
+        val savedSoFar = maxOf(0, week.state.week.deposited - week.state.week.withdrawn)
+        save(week, maxOf(plan.save, economy.minSaveTarget) - savedSoFar)
         week.tryDo(Action.CloseWeek)
         return week.actions
+    }
+
+    private fun newPlan(available: Int): Plan {
+        val free = maxOf(0, available - economy.needMin)
+        val save = minOf(maxOf(economy.minSaveTarget, free / 2 / 5 * 5), free)
+        return planOf(economy.needMin, free - save, save, available)
     }
 }
 
