@@ -42,6 +42,8 @@ class ContentLoader(private val read: (String) -> String = ContentFiles::read) {
             tasks = tasks,
             pets = parse(PET, PetOptions.serializer()),
             texts = parse(TEXTS, TextsFile.serializer()).toTexts(),
+            onboarding = parse(ONBOARDING, OnboardingFile.serializer()).screens,
+            glossary = parse(GLOSSARY, GlossaryFile.serializer()).terms,
         )
     }
 
@@ -79,6 +81,8 @@ class ContentLoader(private val read: (String) -> String = ContentFiles::read) {
         const val ECONOMY = "economy.json"
         const val PET = "pet.json"
         const val TEXTS = "texts.json"
+        const val ONBOARDING = "onboarding.json"
+        const val GLOSSARY = "glossary.json"
     }
 }
 
@@ -104,3 +108,9 @@ private class TextsFile(
 
 @Serializable
 private class PetReasonsFile(val week: Map<String, String>, val now: Map<String, String>)
+
+@Serializable
+private class OnboardingFile(val screens: List<OnboardingScreen>)
+
+@Serializable
+private class GlossaryFile(val terms: List<GlossaryTerm>)
