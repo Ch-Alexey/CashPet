@@ -91,7 +91,8 @@ def run(kind):
         avail = bal
         # План: нужное / желаемое / копилка
         if kind == "разумная":
-            save = f5((avail - 50) / 2); plan = (50, avail - 50 - save, save)
+            # не меньше 10 в копилку, если денег хватает (docs/08-контракты.md, раздел 5а)
+            save = min(max(10, f5((avail - 50) / 2)), max(0, avail - 50)); plan = (50, avail - 50 - save, save)
         elif kind == "транжира":
             plan = (50, avail - 60, 10)
         else:
