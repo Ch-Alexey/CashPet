@@ -5,7 +5,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 
-/** Файлы контента из src/main/resources/content. Загрузчик по контрактам появится после 25.09. */
+/** Файлы контента из src/main/resources/content. Разбор по контрактам — [ContentLoader]. */
 object ContentFiles {
     val ALL = listOf("tasks.json", "shop.json", "goals.json", "glossary.json", "neighbors.json", "onboarding.json")
 

@@ -1,0 +1,5 @@
+{
+  "jobs": [
+    {"id": "help_home", "title": "Помочь по дому", "reward": 10}
+  ]
+}
