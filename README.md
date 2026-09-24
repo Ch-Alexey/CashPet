@@ -2,7 +2,17 @@
 
 Мобильная игра для Android: ребёнок 7–11 лет заботится о коте из Котляндии и учится планировать бюджет, различать нужное и желаемое и копить на цель. Проект для ЛЦТ 2026, задача №6 (Департамент финансов города Москвы).
 
-Статус: проектирование. Код появится с каркасом проекта (этап 0 [плана](docs/03-план.md)).
+Статус: каркас проекта (2026-09-24). Версия 0.1.0, сборка 1, package `io.github.chalexey.cashpet`.
+
+## Запуск
+
+Нужна Android Studio с SDK — по [инструкции](docs/04-окружение.md).
+
+- **Android Studio:** File → Open → папка проекта, дождаться синхронизации Gradle, выбрать телефон и нажать Run ▶.
+- **Терминал (Mac):** `./gradlew test assembleDebug` — тесты и APK в `app/build/outputs/apk/debug/`; `./gradlew installDebug` — поставить на подключённый телефон.
+- **Терминал (Windows):** то же через `gradlew.bat`, например `gradlew test`.
+
+CI в GitHub Actions на каждый PR запускает тесты и собирает APK — его можно скачать во вкладке Actions → запуск → Artifacts.
 
 ## С чего начать
 
@@ -46,8 +56,11 @@
 | [CLAUDE.md](CLAUDE.md) | Правила проекта для Claude Code |
 | `.gitignore` | Что не попадает в Git: сборки, настройки IDE, ключи подписи |
 | `.gitattributes` | Одинаковые окончания строк на Mac и Windows |
+| `settings.gradle.kts`, `build.gradle.kts`, `gradle/libs.versions.toml` | Сборка: модули и версии всех библиотек — в одном месте |
+| `gradlew`, `gradlew.bat`, `gradle/wrapper/` | Gradle Wrapper: скачивает нужный Gradle сам, отдельно ставить не надо |
+| `.github/workflows/ci.yml` | CI: тесты и APK на каждый PR |
 
-### Появятся с каркасом
+### Модули
 
 | Путь | Что | Владелец |
 | --- | --- | --- |
@@ -59,4 +72,4 @@
 
 ## Стек
 
-Kotlin · Jetpack Compose · Room · kotlinx.serialization · JUnit 5 · GitHub Actions. Android 8.0+ (minSdk 26), работает полностью офлайн, без разрешений и без сбора персональных данных.
+Kotlin 2.4 · Jetpack Compose (BOM 2026.09) · Room 2.8 · kotlinx.serialization · JUnit 6 · Gradle 9.8 · Android Gradle Plugin 9.4 · GitHub Actions. Android 8.0+ (minSdk 26, targetSdk 36, compileSdk 37), работает полностью офлайн, без разрешений и без сбора персональных данных.
