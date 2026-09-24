@@ -185,8 +185,9 @@ class ContentGuardTest {
     })
 
     @Test
-    fun `в магазине 8 нужных и 8 желаемых товаров`() {
-        assertEquals(8, content.catalog.items.count { it.part == Part.NEED })
+    fun `в магазине 7 нужных и 8 желаемых товаров`() {
+        // Пластыря нет до непредвиденного расхода (после 29.09); минимум ТЗ — 8 позиций двух типов — выполнен
+        assertEquals(7, content.catalog.items.count { it.part == Part.NEED })
         assertEquals(8, content.catalog.items.count { it.part == Part.WANT })
     }
 
