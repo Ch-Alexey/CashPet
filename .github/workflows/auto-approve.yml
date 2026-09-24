@@ -3,8 +3,11 @@
 # PR Ярика и PR, задевающие чужую зону, ждут живого ревьюера. CI build обязателен всегда.
 name: Автоодобрение своей зоны
 
+# pull_request_target: workflow всегда берётся из main, а не из PR — иначе автор мог бы
+# поправить этот файл в своём PR и одобрить сам себя. Код из PR здесь не выполняется:
+# скрипт только читает через API список изменённых файлов, поэтому права на запись безопасны.
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
