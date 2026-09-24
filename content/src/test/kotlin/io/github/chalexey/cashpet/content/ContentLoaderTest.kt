@@ -29,9 +29,9 @@ class ContentLoaderTest {
     }
 
     @Test
-    fun `магазин — 8 нужных и 8 желаемых, эффекты по показателям`() {
+    fun `магазин — 7 нужных и 8 желаемых, эффекты по показателям`() {
         val items = content.catalog.items
-        assertEquals(8, items.count { it.part == Part.NEED })
+        assertEquals(7, items.count { it.part == Part.NEED })   // без пластыря — он для события после 29.09
         assertEquals(8, items.count { it.part == Part.WANT })
 
         val fish = content.catalog.item("food_fish")!!
@@ -43,6 +43,11 @@ class ContentLoaderTest {
     @Test
     fun `товары только для заданий не попадают на витрину`() {
         assertEquals(null, content.catalog.item("want_comic"))
+    }
+
+    @Test
+    fun `пластыря на витрине нет`() {
+        assertEquals(null, content.catalog.item("care_plaster"))
     }
 
     @Test
