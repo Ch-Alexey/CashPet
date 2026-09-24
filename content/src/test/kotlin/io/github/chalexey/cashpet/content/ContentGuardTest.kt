@@ -185,9 +185,12 @@ class ContentGuardTest {
     })
 
     @Test
-    fun `в магазине 8 нужных и 8 желаемых товаров`() {
-        assertEquals(8, content.catalog.items.count { it.part == Part.NEED })
-        assertEquals(8, content.catalog.items.count { it.part == Part.WANT })
+    fun `в магазине не меньше 8 позиций, из них не меньше 4 нужных и 4 желаемых`() {
+        // ТЗ, таблица 2.6: «не менее 8 позиций двух типов»; рамки, раздел 19: минимум 4 и 4
+        val items = content.catalog.items
+        assertTrue(items.size >= 8, "позиций ${items.size}")
+        assertTrue(items.count { it.part == Part.NEED } >= 4, "нужных ${items.count { it.part == Part.NEED }}")
+        assertTrue(items.count { it.part == Part.WANT } >= 4, "желаемых ${items.count { it.part == Part.WANT }}")
     }
 
     @Test
