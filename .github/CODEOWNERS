@@ -1,0 +1,17 @@
+# Владельцы зон — docs/команда. PR в зону требует одобрения одного из владельцев.
+# У каждой зоны два владельца: автор не может одобрить свой PR сам.
+# Правило ниже перекрывает правило выше.
+
+*                                     @Ch-Alexey @1Oblivious1
+
+/core/                                @Ch-Alexey @1Oblivious1
+/data/                                @1Oblivious1 @Ch-Alexey
+/content/src/main/kotlin/             @1Oblivious1 @Ch-Alexey
+/content/src/test/                    @1Oblivious1 @Ch-Alexey
+/content/src/main/resources/content/  @1Oblivious1 @Ch-Alexey
+/app/                                 @Alexwww228 @1Oblivious1
+
+# Сборка и CI
+/gradle/                              @Ch-Alexey @1Oblivious1
+/*.gradle.kts                         @Ch-Alexey @1Oblivious1
+/.github/                             @Ch-Alexey @1Oblivious1
