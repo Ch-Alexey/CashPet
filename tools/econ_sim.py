@@ -1,59 +1,123 @@
-# Черновая модель стартовой экономики CashPet (docs/02-экономика.md).
-# Проверяет неравенства раздела 19 рамок и прогоняет 5 периодов для трёх сценариев.
+# Черновая модель экономики CashPet (docs/02-экономика.md), версия 2.
+# Проверяет неравенства раздела 19 рамок и прогоняет 5 недель для трёх сценариев.
 # Временный инструмент: после появления симулятора в модуле core источником правды станет он.
-# Запуск: python3 tools/econ_sim.py
-# Стартовая экономика CashPet: проверка неравенств и 5 периодов на 3 сценария
-POCKET=60; START=100
-TASK_R=15; TASKS_PER=2; JOB_R=10; JOBS_PER=2
-NEED={"Корм":30,"Рыбка":45,"Шампунь":20,"Расчёска":15}
-FOOD={"Корм","Рыбка"}; CARE={"Шампунь","Расчёска"}
-WANT={"Мячик":15,"Бантик":25,"Кепка":35,"Куртка":55,"Самокат":80}
-GOALS={"Когтеточка":60,"Домик":100,"Велосипед":150}
-TOL=10; ST2=5; ST3=12
-O=NEED["Корм"]+NEED["Шампунь"]; E=TASKS_PER*TASK_R+JOBS_PER*JOB_R; I=POCKET+E; S=I-O
-SP=sum(WANT.values()); Pmin=min(WANT.values()); Pmax=max(WANT.values()); U=25
-print(f"I={I} O={O} S={S} E={E} ΣP={SP}")
-chk=[("1 O≈0.5I",0.4<=O/I<=0.6,f"{O}/{I}={O/I:.2f}"),("2 Pmin<S",Pmin<S,f"{Pmin}<{S}"),
-("3 ΣP≥3S",SP>=3*S,f"{SP}≥{3*S}"),("4 Pmax>0.5S",Pmax>0.5*S,f"{Pmax}>{0.5*S}"),
-("5 C_mid≈3.5·0.5·S",abs(GOALS['Домик']-1.75*S)<=15,f"{GOALS['Домик']}≈{1.75*S}"),
-("6 U≤0.8S",U<=0.8*S,f"{U}≤{0.8*S}"),("7 E≈0.4–0.6 I",0.4<=E/I<=0.6,f"{E}/{I}={E/I:.2f}"),
-("8 перенос: POCKET≥O (нет тупика)",POCKET>=O,f"{POCKET}≥{O}")]
-for n,ok,d in chk: print(("OK " if ok else "FAIL ")+n+"  "+d)
-f5=lambda x:int(x//5*5)
+# Запуск: python3 tools/econ_sim.py   (Windows: python tools\econ_sim.py)
+import math
+
+# --- Доходы ---
+START = 100            # стартовый бюджет, 1-я неделя
+POCKET = 60            # карманные от мамы-кошки, со 2-й недели
+JOB_R, JOBS_PER = 10, 2  # подработка: оплата и лимит в неделю
+# Награды учебных заданий MVP в порядке открытия (по 2 в неделю): 0, 1.1 | 4.2, 2.3 | 3.1, 3.3 | 6.2
+TASKS_BY_WEEK = [[20, 15], [20, 20], [15, 25], [15], []]
+
+# --- Магазин: цена, сытость, уход, настроение ---
+NEED = {"Корм": (30, 40, 0, 0), "Рыбка": (45, 50, 0, 5), "Витамины": (15, 20, 0, 0),
+        "Консервы": (60, 65, 0, 10), "Шампунь": (20, 0, 40, 0), "Расчёска": (15, 0, 25, 0),
+        "Полотенце": (20, 0, 30, 0), "Пластырь": (25, 0, 30, 0)}
+WANT = {"Погремушка": (10, 10), "Мячик": (15, 15), "Мышка": (20, 18), "Бантик": (25, 20),
+        "Кепка": (35, 25), "Лежанка": (40, 22), "Куртка": (55, 30), "Самокат": (80, 40)}
+GOALS = [100, 150]     # Домик, затем Велосипед (Когтеточка 60 — короткая)
+
+# --- Кот ---
+START_STAT = 70; FLOOR = 25; CAP = 100
+DECAY = {"сытость": 0.75, "уход": 0.8, "настроение": 0.7}   # в конце недели
+N_FOOD, N_CARE = 40, 25   # «нужное в порядке»: за неделю еды на +40 сытости и ухода на +25
+
+# --- Рост ---
+TOL = 10                  # допуск «попроще» = 20
+W_N, W_M, W_S = 40, 30, 30
+STAGE2, STAGE3 = 150, 350
+
+f5 = lambda x: int(x // 5 * 5)
+
+def checks():
+    O = NEED["Корм"][0] + NEED["Шампунь"][0]
+    E = sum(TASKS_BY_WEEK[0]) + JOBS_PER * JOB_R
+    I = POCKET + E; S = I - O
+    prices = [p[0] for p in WANT.values()]
+    SP = sum(prices)
+    rows = [
+        ("1 O ≈ 0,5·I", 0.4 <= O / I <= 0.6, f"{O}/{I} = {O/I:.2f}"),
+        ("2 P_min < S", min(prices) < S, f"{min(prices)} < {S}"),
+        ("3 ΣP ≥ 3·S", SP >= 3 * S, f"{SP} ≥ {3*S}"),
+        ("4 P_max > 0,5·S", max(prices) > 0.5 * S, f"{max(prices)} > {0.5*S:g}"),
+        ("5 C_средняя ≈ 3,5·0,5·S", abs(GOALS[0] - 1.75 * S) <= 25, f"{GOALS[0]} ≈ {1.75*S:g}"),
+        ("6 U ≤ 0,8·S", NEED["Пластырь"][0] <= 0.8 * S, f"{NEED['Пластырь'][0]} ≤ {0.8*S:g}"),
+        ("7 заработок ≈ 0,4–0,6·I", 0.4 <= E / I <= 0.6, f"{E}/{I} = {E/I:.2f}"),
+        ("8 нет тупика: карманные ≥ O", POCKET >= O, f"{POCKET} ≥ {O}"),
+    ]
+    print(f"I={I} O={O} S={S} заработок={E} ΣP(желаемое)={SP}")
+    for n, ok, d in rows:
+        print(("OK   " if ok else "FAIL ") + n + "   " + d)
+    return all(ok for _, ok, _ in rows)
+
+def growth(food, care, fact_need, fact_want, plan, saved, goal_done):
+    n = 0.5 * (food >= N_FOOD) + 0.5 * (care >= N_CARE)
+    d = max(0, fact_need - (plan[0] + TOL)) + max(0, fact_want - (plan[1] + TOL))
+    m = max(0.0, 1 - d / (2 * TOL))
+    target = max(plan[2], 10)
+    s = 1.0 if goal_done else min(saved / target, 1.0)
+    return n, m, s, round(W_N * n + W_M * m + W_S * s)
+
+def mood_label(st):
+    v = 0.4 * st["настроение"] + 0.3 * st["сытость"] + 0.3 * st["уход"]
+    return "радуется" if v >= 75 else "спокоен" if v >= 50 else "грустит"
+
 def run(kind):
-    bal=START; sav=0; pts=0; rows=[]; goals=[GOALS["Домик"],GOALS["Велосипед"]]; goal=goals.pop(0); done=[]
-    for p in range(1,6):
-        if p>1: bal+=POCKET
-        A=bal
-        if kind=="разумная": pn=50; ps=f5((A-50)*0.5); pw=A-50-ps
-        elif kind=="транжира": pn=50; ps=10; pw=A-60
-        else: pn=30; ps=A-30; pw=0
-        earned=E if kind!="транжира" else TASK_R+JOB_R
-        bal+=earned
-        # траты
-        need=0; bought=set()
-        items=["Корм","Шампунь"] if kind!="скопидом" else (["Корм"] if p%2 else ["Корм","Расчёска"])
-        for it in items: bal-=NEED[it]; need+=NEED[it]; bought.add(it)
-        want=0
-        budget = pw if kind=="разумная" else (bal if kind=="транжира" else 0)
-        for it,c in sorted(WANT.items(),key=lambda x:-x[1]):
-            if want+c<=budget and c<=bal: bal-=c; want+=c
-        if kind=="разумная": dep=min(bal, ps+f5(earned/2))
-        elif kind=="транжира": dep=0
-        else: dep=bal
-        dep=min(dep, goal-sav)
-        bal-=dep; sav+=dep
-        assert bal>=0, (kind,p,bal)
-        if sav>=goal: done.append(p); sav-=goal; goal=goals.pop(0) if goals else 10**6
-        c1=bool(bought&FOOD) and bool(bought&CARE)
-        c2=need<=pn+TOL and want<=pw+TOL
-        c3=dep>=ps and dep>=10
-        g=c1+c2+c3; pts+=g
-        st=3 if pts>=ST3 else 2 if pts>=ST2 else 1
-        rows.append((p,A,f"{pn}/{pw}/{ps}",earned,need,want,dep,f"{sav}"+(' ✓цель' if done and done[-1]==p else ''),bal,g,pts,st))
+    bal = START; sav = 0; goals = list(GOALS); goal = goals.pop(0); total = 0
+    st = {k: START_STAT for k in DECAY}; rows = []
+    for w in range(5):
+        if w > 0: bal += POCKET
+        avail = bal
+        # План: нужное / желаемое / копилка
+        if kind == "разумная":
+            plan = (50, 0, 0); save = f5((avail - 50) / 2); plan = (50, avail - 50 - save, save)
+        elif kind == "транжира":
+            plan = (50, avail - 60, 10)
+        else:
+            plan = (30, 0, avail - 30)
+        tasks = TASKS_BY_WEEK[w] if kind != "транжира" else TASKS_BY_WEEK[w][:1]
+        jobs = JOBS_PER if kind != "транжира" else 1
+        earned = sum(tasks) + jobs * JOB_R
+        bal += earned
+        # Нужное
+        if kind == "скопидом":
+            buy = ["Корм"] if w % 2 == 0 else ["Корм", "Расчёска"]
+        else:
+            buy = ["Корм", "Шампунь"]
+        fact_need = food = care = 0
+        for it in buy:
+            p, sa, ca, mo = NEED[it]
+            bal -= p; fact_need += p; food += sa; care += ca
+            st["сытость"] = min(CAP, st["сытость"] + sa); st["уход"] = min(CAP, st["уход"] + ca)
+        # Желаемое
+        limit = plan[1] if kind == "разумная" else (bal if kind == "транжира" else 0)
+        fact_want = 0
+        for it, (p, mo) in sorted(WANT.items(), key=lambda x: -x[1][0]):
+            if fact_want + p <= limit and p <= bal:
+                bal -= p; fact_want += p; st["настроение"] = min(CAP, st["настроение"] + mo)
+        # Копилка
+        dep = {"разумная": plan[2], "транжира": 0, "скопидом": bal}[kind]
+        dep = min(dep, bal, goal - sav)
+        bal -= dep; sav += dep
+        assert bal >= 0, (kind, w, bal)
+        done = sav >= goal
+        if done: sav -= goal; goal = goals.pop(0) if goals else 10 ** 6
+        n, m, s, gp = growth(food, care, fact_need, fact_want, plan, dep, done)
+        total += gp
+        stage = 3 if total >= STAGE3 else 2 if total >= STAGE2 else 1
+        label = mood_label(st)
+        rows.append((w + 1, avail, "/".join(map(str, plan)), earned, fact_need, fact_want, dep,
+                     f"{sav}" + (" ✓цель" if done else ""), bal, f"{n:g}", f"{m:g}", f"{s:.2g}", gp, total, stage, label))
+        for k in st: st[k] = max(FLOOR, round(st[k] * DECAY[k]))
     return rows
-for k in ["разумная","транжира","скопидом"]:
-    print(f"\n### {k}")
-    print("| Период | Доступно в начале | План нужн./жел./копилка | Заработал | Нужное | Желаемое | В копилку | Копилка всего | Баланс в конце | Очки | Сумма очков | Стадия |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|---|")
-    for r in run(k): print("| "+" | ".join(map(str,r))+" |")
+
+if __name__ == "__main__":
+    checks()
+    head = ("| Неделя | Доступно | План нужн./жел./копилка | Заработал | Нужное | Желаемое | В копилку "
+            "| Копилка | Баланс | N | M | S | GP | ΣGP | Стадия | Кот |")
+    for kind in ["разумная", "транжира", "скопидом"]:
+        print(f"\n### {kind}\n{head}\n" + "|---" * 16 + "|")
+        for r in run(kind):
+            print("| " + " | ".join(map(str, r)) + " |")
