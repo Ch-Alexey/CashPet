@@ -168,19 +168,21 @@ class GameEngine(private val economy: EconomyConfig, private val catalog: Catalo
             add(Way.DO_TASK)
         }
         if (catalog.jobs.isNotEmpty() && state.week.jobsDone < economy.jobsPerWeek) add(Way.DO_JOB)
+        // item == null — не хватает на взнос: «взять из копилки», чтобы положить в копилку, не предлагаем
         if (item != null) {
             if (catalog.items.any { it.part == item.part && it.price < item.price && it.price <= state.balance }) {
                 add(Way.CHEAPER_ITEM)
             }
             add(Way.WISHLIST)
+            if (state.savings.total >= missing) add(Way.TAKE_FROM_SAVINGS)
         }
-        if (state.savings.total >= missing) add(Way.TAKE_FROM_SAVINGS)
     }
 
     // --- Копилка ---
 
     private fun chooseGoal(state: GameState, goalId: String): Result {
         if (catalog.goal(goalId) == null) return rejected(Rejection.UnknownId(goalId))
+        if (goalId in state.savings.boughtGoalIds) return rejected(Rejection.GoalAlreadyBought)
         val savings = state.savings.copy(activeGoalId = goalId)
         return ok(state, state.copy(savings = savings), FeedbackReason.GOAL_CHOSEN)
     }

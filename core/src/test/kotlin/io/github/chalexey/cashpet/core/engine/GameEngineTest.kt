@@ -169,6 +169,22 @@ class GameEngineTest {
         }
 
         @Test
+        fun `не хватает на взнос — «взять из копилки» не предлагается`() {
+            val s = planned(Plan(50, 0, 50)).act(Action.Deposit(60))          // кошелёк 40, копилка 60
+            val reason = s.reject(Action.Deposit(60)) as Rejection.NotEnoughMoney
+            assertEquals(20, reason.missing)
+            assertFalse(Way.TAKE_FROM_SAVINGS in reason.options)
+        }
+
+        @Test
+        fun `купленную мечту выбрать снова нельзя, другую — можно`() {
+            val s = TestContent.newGame().act(Action.SetPlan(Plan(30, 0, 70)), Action.ConfirmPlan,
+                Action.ChooseGoal("goal_scratcher"), Action.Deposit(60), Action.BuyGoal)
+            assertEquals(Rejection.GoalAlreadyBought, s.reject(Action.ChooseGoal("goal_scratcher")))
+            assertEquals("goal_house", s.act(Action.ChooseGoal("goal_house")).savings.activeGoalId)
+        }
+
+        @Test
         fun `сумма взноса не кратная 5 — отказ`() {
             assertEquals(Rejection.InvalidAmount, planned().reject(Action.Deposit(12)))
             assertEquals(Rejection.InvalidAmount, planned().reject(Action.Deposit(0)))
