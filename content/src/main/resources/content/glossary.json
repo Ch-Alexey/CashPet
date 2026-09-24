@@ -1,0 +1,28 @@
+{
+  "_meta": { "note": "Термины собраны из итоговых карточек-глоссариев каждого модуля." },
+  "terms": [
+    { "id": "need", "term": "Нужно", "definition": "Без этого питомец не обойдётся.", "module": 1 },
+    { "id": "want", "term": "Хочу", "definition": "Приятно, но можно подождать.", "module": 1 },
+    { "id": "save", "term": "Отложить", "definition": "Не тратить сейчас, а сберечь.", "module": 1 },
+    { "id": "plan", "term": "План", "definition": "Решение заранее, на что пойдут монеты.", "module": 2 },
+    { "id": "reserve", "term": "Остаток (запас)", "definition": "Монеты, которые пока не распределены.", "module": 2 },
+    { "id": "deviation", "term": "Отклонение", "definition": "Разница между планом и тем, что получилось.", "module": 2 },
+    { "id": "goal", "term": "Цель", "definition": "То, на что копим.", "module": 3 },
+    { "id": "contribution", "term": "Взнос", "definition": "Монеты, которые кладём в копилку.", "module": 3 },
+    { "id": "term_length", "term": "Срок", "definition": "Через сколько недель мечта сбудется.", "module": 3 },
+    { "id": "piggy_bank", "term": "Копилка", "definition": "Монеты, которые ждут своего часа.", "module": 3 },
+    { "id": "price_per_portion", "term": "Цена за порцию", "definition": "Сколько стоит одна часть, если товар делится на части.", "module": 4 },
+    { "id": "discount", "term": "Скидка", "definition": "Сниженная цена.", "module": 4 },
+    { "id": "change", "term": "Сдача", "definition": "То, что возвращают, если заплатили больше цены.", "module": 4 },
+    { "id": "month_summary", "term": "Итоги месяца", "definition": "Взгляд на все недели сразу.", "module": 5 },
+    { "id": "stage", "term": "Стадия", "definition": "То, каким становится {petName}, когда решения регулярно разумные.", "module": 5 },
+    { "id": "earnings", "term": "Заработок", "definition": "Монеты, которые получаешь за дело.", "module": 6, "mvp": false },
+    { "id": "hourly_pay", "term": "Оплата в час", "definition": "Сколько платят за один час дела.", "module": 6, "mvp": false },
+    { "id": "secret", "term": "Секрет", "definition": "Код или пароль, который знают только свои.", "module": 7, "mvp": false },
+    { "id": "urgency", "term": "Спешка", "definition": "Когда просят решить очень быстро.", "module": 7, "mvp": false },
+    { "id": "too_generous", "term": "Обещают слишком много", "definition": "Например: «В два раза больше!», «Бесплатно, только заплати чуть-чуть».", "module": 7, "mvp": false },
+    { "id": "gift_category", "term": "Подарить", "definition": "Часть плана для того, чтобы порадовать кого-то ещё.", "module": 8, "mvp": false, "note": "В MVP не является отдельной 4-й частью плана — покупка подарка идёт из «Хочу» во время события." },
+    { "id": "budget_estimate", "term": "Смета", "definition": "Список того, что нужно, и сколько это будет стоить вместе.", "module": 8, "mvp": false },
+    { "id": "share", "term": "Доля", "definition": "Часть общей суммы, которую вносит один из участников.", "module": 8, "mvp": false }
+  ]
+}
