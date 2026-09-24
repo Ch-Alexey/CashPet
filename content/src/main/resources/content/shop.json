@@ -1,5 +1,5 @@
 {
-  "_meta": {"note": "Каталог Ярика в формате docs/08-контракты.md, раздел 7. Числа — docs/02-экономика.md"},
+  "_meta": {"note": "Каталог Ярика в формате docs/08-контракты.md, раздел 7. Числа — docs/02-экономика.md. Пластыря нет: он только для непредвиденного расхода, а тот — после 29.09"},
   "items": [
     {"id": "food_vitamins", "name": "Витамины", "part": "need", "price": 15, "effects": {"satiety": 20}},
     {"id": "food_basic", "name": "Пакет корма", "part": "need", "price": 30, "effects": {"satiety": 40}},
@@ -8,7 +8,6 @@
     {"id": "care_comb", "name": "Расчёска", "part": "need", "price": 15, "effects": {"care": 25}},
     {"id": "care_shampoo", "name": "Шампунь", "part": "need", "price": 20, "effects": {"care": 40}},
     {"id": "care_towel", "name": "Полотенце", "part": "need", "price": 20, "effects": {"care": 30}},
-    {"id": "care_plaster", "name": "Пластырь", "part": "need", "price": 25, "effects": {"care": 30}},
     {"id": "want_rattle", "name": "Погремушка", "part": "want", "price": 10, "effects": {"mood": 10}},
     {"id": "want_ball", "name": "Мячик", "part": "want", "price": 15, "effects": {"mood": 15}},
     {"id": "want_plush_mouse", "name": "Плюшевая мышка", "part": "want", "price": 20, "effects": {"mood": 18}},
