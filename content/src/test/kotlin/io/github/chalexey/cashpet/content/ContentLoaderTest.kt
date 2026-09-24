@@ -102,6 +102,14 @@ class ContentLoaderTest {
     }
 
     @Test
+    fun `онбординг и словарь читаются`() {
+        assertEquals(ScreenKind.PLAYER_NAME, content.onboarding.first().kind)
+        assertEquals("0", content.onboarding.last().next)
+        assertEquals(12, content.onboarding.first().input!!.maxLength)
+        assertTrue(content.glossary.any { it.term == "Копилка" })
+    }
+
+    @Test
     fun `сломанный JSON — ошибка с именем файла`() {
         val loader = ContentLoader { name -> if (name == ContentLoader.SHOP) "{ \"items\": [" else sample(name) }
 

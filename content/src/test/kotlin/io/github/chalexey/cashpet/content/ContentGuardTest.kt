@@ -57,7 +57,15 @@ class ContentGuardTest {
         tasks.flatMap { it.texts() } +
             content.texts.feedback.map { (k, v) -> "texts.feedback.$k" to v } +
             content.texts.petWeek.map { (k, v) -> "texts.week.$k" to v } +
-            content.texts.petNow.map { (k, v) -> "texts.now.$k" to v }
+            content.texts.petNow.map { (k, v) -> "texts.now.$k" to v } +
+            content.onboarding.flatMap { sc ->
+                listOfNotNull(sc.text, sc.finePrint, sc.button, sc.petReply).map { "onboarding.${sc.id}" to it } +
+                    sc.bullets.map { "onboarding.${sc.id}.bullet" to it.text } +
+                    sc.choices.values.map { "onboarding.${sc.id}.choice" to it } +
+                    listOfNotNull(sc.input?.placeholder, sc.input?.hint, sc.input?.emptyError, sc.input?.tooLongError)
+                        .map { "onboarding.${sc.id}.input" to it }
+            } +
+            content.glossary.map { "glossary.${it.id}" to it.definition }
     }
 
     private fun violations(check: (String, String) -> String?): List<String> =
@@ -205,5 +213,36 @@ class ContentGuardTest {
         val spender = Autoplay.weeks(start, engine, SpenderStrategy(content.economy, content.catalog, goals), weeks = 5)
         assertTrue(spender.last().pet.stage <= Stage.TEEN, "транжира за 5 недель")
         assertTrue((reasonable + spender).all { it.balance >= 0 && it.savings.total >= 0 })
+    }
+
+    @Test
+    fun `онбординг — все обязательные шаги по одному разу, последний ведёт в открытое задание`() {
+        val screens = content.onboarding
+        assertEquals(screens.size, screens.map { it.id }.toSet().size, "повторяются id экранов")
+        for (kind in listOf(ScreenKind.PLAYER_NAME, ScreenKind.LOOK, ScreenKind.PET_NAME, ScreenKind.DIFFICULTY)) {
+            assertEquals(1, screens.count { it.kind == kind }, "экран $kind")
+        }
+        screens.filter { it.kind == ScreenKind.PLAYER_NAME || it.kind == ScreenKind.PET_NAME }.forEach {
+            assertTrue(it.input != null && it.input!!.maxLength > 0, "${it.id}: нет поля ввода")
+        }
+        assertEquals(setOf("easy", "hard"), screens.single { it.kind == ScreenKind.DIFFICULTY }.choices.keys)
+        // Игровое имя спрашиваем раньше, чем подставляем, а имя кота — раньше, чем о нём говорим
+        val playerAt = screens.indexOfFirst { it.kind == ScreenKind.PLAYER_NAME }
+        val petAt = screens.indexOfFirst { it.kind == ScreenKind.PET_NAME }
+        screens.forEachIndexed { i, sc ->
+            if ("{playerName}" in sc.text) assertTrue(i > playerAt, "${sc.id}: {playerName} до ввода имени")
+            if ("{petName}" in sc.text) assertTrue(i > petAt, "${sc.id}: {petName} до ввода имени кота")
+        }
+        val first = screens.last().next
+        assertTrue(tasks.any { it.id == first && it.unlockWeek == 1 }, "после онбординга — задание «$first», его нет или оно закрыто")
+    }
+
+    @Test
+    fun `словарь — термины уникальны и объяснены`() {
+        assertEquals(content.glossary.size, content.glossary.map { it.id }.toSet().size, "повторяются id терминов")
+        content.glossary.forEach { assertTrue(it.term.isNotBlank() && it.definition.isNotBlank(), it.id) }
+        // Слова из трёх решений онбординга обязаны быть в словаре
+        val terms = content.glossary.map { it.term }.toSet()
+        content.onboarding.flatMap { it.bullets }.forEach { assertTrue(it.term in terms, "нет в словаре: ${it.term}") }
     }
 }
