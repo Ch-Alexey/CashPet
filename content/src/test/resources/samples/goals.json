@@ -1,0 +1,7 @@
+{
+  "catalog": [
+    {"id": "goal_scratcher", "name": "Когтеточка", "cost": 60},
+    {"id": "goal_house", "name": "Домик", "cost": 100},
+    {"id": "goal_bike", "name": "Велосипед", "cost": 150}
+  ]
+}

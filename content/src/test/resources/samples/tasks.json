@@ -1,0 +1,108 @@
+{
+  "_meta": {"note": "Образец формата tasks.json — docs/07-формат-заданий.md. Задания 0 и 1.1"},
+  "tasks": [
+    {
+      "id": "0",
+      "module": 0,
+      "title": "Первый день",
+      "topic": "intro",
+      "unlock_week": 1,
+      "reward": {"coins": 20},
+      "intro": "{petName} получает пять пробных монет. Что с ними сделать?",
+      "steps": [
+        {
+          "id": "step1",
+          "template": "choice",
+          "wallet": 5,
+          "savings": 0,
+          "situation": "Пробные монеты игровые и не списываются с баланса.",
+          "options": [
+            {
+              "id": "food",
+              "label": "Корм («нужно»)",
+              "effects": {"wallet": -5, "satiety": 10},
+              "consequence": "{petName} ест и радуется",
+              "feedback": "Корм — это «нужно»: без еды не обойтись",
+              "outcome": "good"
+            },
+            {
+              "id": "ball",
+              "label": "Мяч («хочу»)",
+              "effects": {"wallet": -5, "mood": 10},
+              "consequence": "{petName} с восторгом играет",
+              "feedback": "Мяч — это «хочу»: приятно, но еду не заменяет",
+              "outcome": "good"
+            },
+            {
+              "id": "save",
+              "label": "В копилку («отложить»)",
+              "effects": {"wallet": -5, "savings": 5},
+              "consequence": "Монеты в копилке",
+              "feedback": "Отложить — значит сберечь на потом",
+              "outcome": "good"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1.1",
+      "module": 1,
+      "title": "Пустая миска и большой мяч",
+      "topic": "purchases",
+      "competence": 2,
+      "unlock_week": 1,
+      "reward": {"coins": 15},
+      "neighbor_lines": [
+        {"character": "toroplivy", "text": "Я бы сразу взял мяч, тут и решать нечего!"}
+      ],
+      "steps": [
+        {
+          "id": "step1",
+          "template": "choice",
+          "wallet": 30,
+          "situation": "{petName} ждёт ужина, а в магазине лежит большой мяч. У тебя 30 монет. Корм и мяч стоят по 30. Что купить?",
+          "options": [
+            {
+              "id": "food",
+              "label": "Купить корм",
+              "effects": {"wallet": -30, "satiety": 40},
+              "consequence": "Миска полная, {petName} радуется",
+              "feedback": "Еда — это нужное. Мяч можно купить в другой раз",
+              "outcome": "good"
+            },
+            {
+              "id": "ball",
+              "label": "Купить мяч",
+              "effects": {"wallet": -30, "mood": 15},
+              "consequence": "{petName} играет, но всё ещё хочет есть",
+              "feedback": "Мяч — это желаемое, он приятен. Обычно сначала покупают нужное",
+              "outcome": "retry",
+              "recovery": "Мяч можно добавить в «Хочу потом» и купить позже"
+            },
+            {
+              "id": "half",
+              "label": "Взять по половинке",
+              "blocked": true,
+              "feedback": "Половинки не продаются: монет хватает на что-то одно",
+              "followup": {"prompt": "Что делаем?", "buttons": ["Купить корм", "Мяч — в «Хочу потом»"]}
+            }
+          ]
+        }
+      ],
+      "hard_variant": {
+        "steps": {
+          "step1": {
+            "situation": "{petName} ждёт ужина. Большой мяч сегодня со скидкой: 15 монет. У тебя 30 монет. Что купить?",
+            "options": {
+              "ball": {
+                "effects": {"wallet": -15, "mood": 15},
+                "feedback": "Скидка — это хорошо. Но осталось 15 монет, а корм стоит 30"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
