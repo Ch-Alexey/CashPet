@@ -28,11 +28,11 @@
     }
   ],
   "transactions": [
-    {"week": 1, "source": {"type": "io.github.chalexey.cashpet.core.model.TxSource.StartBudget"},
+    {"week": 1, "source": {"type": "start_budget"},
      "walletDelta": 100, "savingsDelta": 0, "balanceAfter": 100, "savingsAfter": 0},
-    {"week": 1, "source": {"type": "io.github.chalexey.cashpet.core.model.TxSource.TaskReward", "taskId": "0"},
+    {"week": 1, "source": {"type": "task_reward", "taskId": "0"},
      "walletDelta": 20, "savingsDelta": 0, "balanceAfter": 120, "savingsAfter": 0},
-    {"week": 1, "source": {"type": "io.github.chalexey.cashpet.core.model.TxSource.Deposit"},
+    {"week": 1, "source": {"type": "deposit"},
      "walletDelta": -25, "savingsDelta": 25, "balanceAfter": 95, "savingsAfter": 25}
   ],
   "wishlist": ["want_scooter"],

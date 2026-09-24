@@ -236,36 +236,8 @@ class ContentGuardTest {
 
     @Test
     fun `неравенства баланса из раздела 19 рамок — на настоящей экономике`() {
-        // Те же проверки, что в tools/econ_sim.py и в таблице docs/02-экономика.md, но по настоящим JSON
-        val e = content.economy
-        val wants = content.catalog.items.filter { it.part == Part.WANT }.map { it.price }
-        val need = e.needMin                                                         // O — обязательное за неделю
-        val earned = content.catalog.tasks.filter { it.unlockWeek == 1 }.sumOf { it.rewardCoins } +
-            e.jobsPerWeek * e.jobReward                                              // заработок первой недели
-        val income = e.pocketMoney + earned                                          // I
-        val free = income - need                                                     // S
-        val goalAvg = content.catalog.goals.map { it.cost }.average()
-
-        // 8б: свободные монеты самой «богатой» недели разумной игры — с переносом остатка
-        val engine = GameEngine(e, content.catalog)
-        val start = engine.newGame(Profile("Тест", Difficulty.HARD), "Пончик", PetLook("fluffy", "ginger"))
-        val weeks = Autoplay.weeks(start, engine, ReasonableStrategy(e, content.catalog), weeks = 5)
-        val freeMax = weeks.mapIndexed { i, s ->
-            val r = s.history.last()
-            (if (i == 0) start else weeks[i - 1]).week.available + r.earned - r.factNeed
-        }.max()
-
-        val broken = buildList {
-            if (need * 10 !in income * 4..income * 6) add("1. O ≈ 0,5 · I: $need из $income")
-            if (wants.min() >= free) add("2. P_min < S: ${wants.min()} и $free")
-            if (wants.sum() < 3 * free) add("3. ΣP ≥ 3 · S: ${wants.sum()} и ${3 * free}")
-            if (2 * wants.max() <= free) add("4. P_max > 0,5 · S: ${wants.max()} и $free")
-            if (kotlin.math.abs(goalAvg - 1.75 * free) > 25) add("5. C_средняя ≈ 3,5 · 0,5 · S: $goalAvg и ${1.75 * free}")
-            // 6. U ≤ 0,8 · S — непредвиденный расход после 29.09, пластыря на витрине нет
-            if (earned * 10 !in income * 4..income * 6) add("7. заработок ≈ 0,4–0,6 · I: $earned из $income")
-            if (e.pocketMoney < need) add("8а. нет тупика, карманные ≥ O: ${e.pocketMoney} и $need")
-            if (wants.sum() < 2 * freeMax) add("8б. перенос, ΣP ≥ 2 · S_max: ${wants.sum()} и ${2 * freeMax}")
-        }
+        // Те же проверки печатает симулятор ./gradlew :content:simulate — считает общий BalanceChecks
+        val broken = BalanceChecks.run(content).filterNot { it.ok }.map { "${it.name}: ${it.detail}" }
         assertTrue(broken.isEmpty(), "Нарушены неравенства (docs/02-экономика.md):\n" + broken.joinToString("\n"))
     }
 
