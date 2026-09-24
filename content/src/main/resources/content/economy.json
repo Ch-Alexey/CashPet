@@ -1,0 +1,21 @@
+{
+  "_meta": {"note": "Все числа — docs/02-экономика.md. Меняются только вместе с симулятором и таблицами"},
+  "start_budget": 100,
+  "pocket_money": 60,
+  "job_reward": 10,
+  "jobs_per_week": 2,
+  "tolerance": {"easy": 20, "hard": 10},
+  "need_min": 50,
+  "need_hint": {"easy": "always", "hard": "first_week"},
+  "weights": {"n": 40, "m": 30, "s": 30},
+  "stage_thresholds": {"teen": 150, "adult": 350},
+  "stats": {
+    "start": 70, "floor": 25, "cap": 100,
+    "decay_pct": {"satiety": 75, "care": 80, "mood": 70},
+    "hungry_below": 50, "unkempt_below": 50
+  },
+  "need_food_points": 40,
+  "need_care_points": 25,
+  "min_save_target": 10,
+  "mood": {"happy": 75, "calm": 50}
+}
