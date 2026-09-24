@@ -1,0 +1,50 @@
+# Автоодобрение PR в своей зоне (docs/команда). Своё одобрение GitHub не засчитывает,
+# поэтому одобряет бот github-actions — если автор из списка и все файлы в его зоне.
+# PR Ярика и PR, задевающие чужую зону, ждут живого ревьюера. CI build обязателен всегда.
+name: Автоодобрение своей зоны
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  approve:
+    # Только ветки этого репозитория, не форки
+    if: github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            // Зоны — префиксы путей. Пустая строка — весь репозиторий
+            const zones = {
+              'Ch-Alexey':   [''],
+              '1Oblivious1': ['data/', 'content/', 'app/', 'docs/', 'tools/'],
+              'Alexwww228':  ['app/', 'design/', 'docs/'],
+            };
+            const pr = context.payload.pull_request;
+            const author = pr.user.login;
+            const allowed = zones[author];
+            if (!allowed) {
+              core.info(`${author}: автоодобрения нет, нужен ревьюер`);
+              return;
+            }
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.number,
+            });
+            // При переименовании проверяем и старый путь
+            const paths = files.flatMap(f => f.previous_filename ? [f.filename, f.previous_filename] : [f.filename]);
+            const outside = paths.filter(p => !allowed.some(prefix => p.startsWith(prefix)));
+            if (outside.length > 0) {
+              core.info(`Файлы вне зоны ${author}, нужен ревьюер:\n${outside.join('\n')}`);
+              return;
+            }
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.number,
+              event: 'APPROVE',
+              body: `Автоодобрение: все ${paths.length} файлов — в зоне ${author}.`,
+            });
