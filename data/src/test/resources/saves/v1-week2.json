@@ -1,0 +1,40 @@
+{
+  "profile": {"playerName": "Лис", "difficulty": "easy", "slot": "CHILD"},
+  "pet": {
+    "name": "Пончик",
+    "look": {"breedId": "fluffy", "colorId": "ginger"},
+    "stats": {"satiety": 75, "care": 80, "mood": 67},
+    "totalGp": 100,
+    "stage": "baby"
+  },
+  "balance": 60,
+  "savings": {"total": 25, "activeGoalId": "goal_house", "recentWeeklySaved": [25], "boughtGoalIds": []},
+  "week": {
+    "number": 2, "available": 115,
+    "plan": {"need": 50, "want": 35, "save": 30}, "planConfirmed": true,
+    "spentNeed": 0, "spentWant": 0, "deposited": 0, "withdrawn": 0, "earned": 0,
+    "foodPoints": 0, "carePoints": 0, "jobsDone": 0, "goalBought": false
+  },
+  "history": [
+    {
+      "number": 1,
+      "plan": {"need": 50, "want": 25, "save": 25}, "planConfirmed": true,
+      "factNeed": 50, "factWant": 25, "factSaved": 25, "earned": 55,
+      "nPct": 100, "mPct": 100, "sPct": 100, "gp": 100, "totalGp": 100,
+      "stageBefore": "baby", "stageAfter": "baby",
+      "statsBefore": {"satiety": 100, "care": 100, "mood": 95},
+      "statsAfter": {"satiety": 75, "care": 80, "mood": 67},
+      "petReason": "JOYFUL"
+    }
+  ],
+  "transactions": [
+    {"week": 1, "source": {"type": "io.github.chalexey.cashpet.core.model.TxSource.StartBudget"},
+     "walletDelta": 100, "savingsDelta": 0, "balanceAfter": 100, "savingsAfter": 0},
+    {"week": 1, "source": {"type": "io.github.chalexey.cashpet.core.model.TxSource.TaskReward", "taskId": "0"},
+     "walletDelta": 20, "savingsDelta": 0, "balanceAfter": 120, "savingsAfter": 0},
+    {"week": 1, "source": {"type": "io.github.chalexey.cashpet.core.model.TxSource.Deposit"},
+     "walletDelta": -25, "savingsDelta": 25, "balanceAfter": 95, "savingsAfter": 25}
+  ],
+  "wishlist": ["want_scooter"],
+  "tasks": {"0": {"taskId": "0", "topic": "intro", "firstOutcome": "good", "week": 1}}
+}
