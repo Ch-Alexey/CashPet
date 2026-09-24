@@ -1,51 +1,25 @@
 {
-  "_meta": {
-    "currency": "рубли Котляндии (название на утверждении — риск ассоциации со словом «рубль»)",
-    "notes": [
-      "Показатели: 🍗 Сытость, 🧼 Уют, 😊 Настроение. Диапазон 25-100.",
-      "Открытый вопрос: в разделе «Стадии» (см. growth.json) корм/уход растут вместе со стадией (30→35→40→45 / 20→25→30→35). Не решено, значит ли это рост цены этих же самых позиций каталога ниже, или на старших стадиях нужно покупать больше единиц/более сильные позиции (например, Консервы вместо Пакета корма) для покрытия needMin. Каталог ниже дан в ценах стадии 1."
-    ]
-  },
-  "need": [
-    { "id": "food_basic", "name": "Пакет корма", "price": 30, "satiety": 40, "comfort": 0, "mood": 0, "note": "Базовый вариант еды" },
-    { "id": "food_fish", "name": "Свежая рыбка", "price": 45, "satiety": 50, "comfort": 0, "mood": 5, "note": "Дороже, для сравнения цены" },
-    { "id": "food_vitamins", "name": "Витамины", "price": 15, "satiety": 20, "comfort": 0, "mood": 0, "note": "Дешёвая добавка, слабее пакета корма — не должна заменять основной корм" },
-    { "id": "food_premium", "name": "Консервы (премиум)", "price": 60, "satiety": 65, "comfort": 0, "mood": 10, "note": "Дороже рыбки, самый сильный вариант еды" },
-    { "id": "care_shampoo", "name": "Шампунь", "price": 20, "satiety": 0, "comfort": 40, "mood": 0, "note": "Базовый вариант ухода" },
-    { "id": "care_comb", "name": "Расчёска", "price": 15, "satiety": 0, "comfort": 25, "mood": 0, "note": "Дешевле, эффект слабее" },
-    { "id": "care_plaster", "name": "Пластырь", "price": 25, "satiety": 0, "comfort": 30, "mood": 0, "note": "Только при непредвиденном расходе (посложнее, периоды 3 и 5)" },
-    { "id": "care_towel", "name": "Полотенце", "price": 20, "satiety": 0, "comfort": 30, "mood": 0, "note": "Альтернатива расчёске по той же цене — задел для сравнения «одинаковая цена, разный эффект»" }
+  "_meta": {"note": "Каталог Ярика в формате docs/08-контракты.md, раздел 7. Числа — docs/02-экономика.md"},
+  "items": [
+    {"id": "food_vitamins", "name": "Витамины", "part": "need", "price": 15, "effects": {"satiety": 20}},
+    {"id": "food_basic", "name": "Пакет корма", "part": "need", "price": 30, "effects": {"satiety": 40}},
+    {"id": "food_fish", "name": "Свежая рыбка", "part": "need", "price": 45, "effects": {"satiety": 50, "mood": 5}},
+    {"id": "food_premium", "name": "Консервы", "part": "need", "price": 60, "effects": {"satiety": 65, "mood": 10}},
+    {"id": "care_comb", "name": "Расчёска", "part": "need", "price": 15, "effects": {"care": 25}},
+    {"id": "care_shampoo", "name": "Шампунь", "part": "need", "price": 20, "effects": {"care": 40}},
+    {"id": "care_towel", "name": "Полотенце", "part": "need", "price": 20, "effects": {"care": 30}},
+    {"id": "care_plaster", "name": "Пластырь", "part": "need", "price": 25, "effects": {"care": 30}},
+    {"id": "want_rattle", "name": "Погремушка", "part": "want", "price": 10, "effects": {"mood": 10}},
+    {"id": "want_ball", "name": "Мячик", "part": "want", "price": 15, "effects": {"mood": 15}},
+    {"id": "want_plush_mouse", "name": "Плюшевая мышка", "part": "want", "price": 20, "effects": {"mood": 18}},
+    {"id": "want_bow", "name": "Бантик", "part": "want", "price": 25, "effects": {"mood": 20}, "accessory": true},
+    {"id": "want_cap", "name": "Кепка", "part": "want", "price": 35, "effects": {"mood": 25}, "accessory": true},
+    {"id": "want_bed", "name": "Лежанка", "part": "want", "price": 40, "effects": {"mood": 22}},
+    {"id": "want_jacket", "name": "Куртка", "part": "want", "price": 55, "effects": {"mood": 30}, "accessory": true},
+    {"id": "want_scooter", "name": "Самокат", "part": "want", "price": 80, "effects": {"mood": 40}}
   ],
-  "want": [
-    { "id": "want_rattle", "name": "Погремушка", "price": 10, "comfort": 0, "mood": 10, "note": "Самая дешёвая позиция, для самых первых покупок" },
-    { "id": "want_ball", "name": "Мячик", "price": 15, "comfort": 0, "mood": 15 },
-    { "id": "want_plush_mouse", "name": "Плюшевая мышка", "price": 20, "comfort": 0, "mood": 18 },
-    { "id": "want_bow", "name": "Бантик", "price": 25, "comfort": 0, "mood": 20, "accessory": true },
-    { "id": "want_bed", "name": "Лежанка", "price": 40, "comfort": 10, "mood": 22, "used_in_tasks": ["4.2"] },
-    { "id": "want_cap", "name": "Кепка", "price": 35, "comfort": 0, "mood": 25, "accessory": true },
-    { "id": "want_jacket", "name": "Куртка", "price": 55, "comfort": 5, "mood": 30, "accessory": true },
-    { "id": "want_scooter", "name": "Самокат", "price": 80, "comfort": 0, "mood": 40, "note": "Дороже свободного остатка на старте, нужно копить" },
-    {
-      "id": "want_music_toy", "name": "Музыкальная игрушка", "price": 60, "comfort": 0, "mood": null,
-      "note": "Используется в заданиях 1.2 (база 60, скидка 30) и 1.3 (упомянута со скидкой 20 — расхождение с 1.2 признано намеренным разнообразием, не унифицировать). Отсутствует в общем каталоге витрины, только в тексте этих двух заданий.",
-      "used_in_tasks": ["1.2", "1.3"]
-    },
-    {
-      "id": "want_comic", "name": "Комикс", "price": 40, "comfort": 0, "mood": null,
-      "note": "Упомянут только в задании 3.3 (скидка вдвое → 20 монет)",
-      "used_in_tasks": ["3.3"]
-    }
-  ],
-  "gifts": {
-    "available_only_during": "событие (день рождения / праздник)",
-    "items": [
-      { "id": "gift_sticker", "name": "Наклейка", "price": 5, "mood": 5, "note": "Можно поздравить даже с минимумом монет" },
-      { "id": "gift_card", "name": "Открытка", "price": 10, "mood": 10 },
-      { "id": "gift_cake_slice", "name": "Пирожное", "price": 20, "mood": 15 },
-      { "id": "gift_toy", "name": "Игрушка", "price": 30, "mood": 20 },
-      { "id": "gift_cake", "name": "Праздничный торт", "price": 40, "mood": 25, "note": "Для более крупных событий (несколько гостей сразу)" },
-      { "id": "gift_none", "name": "Просто поздравить", "price": 0, "mood": 0, "feedback": "Спасибо, что поздравил!" }
-    ]
-  },
-  "efficiency_by_price_design_note": "Эффективность (mood/цена) у 'want' убывает по мере роста цены (1,0 → 0,73 у дорогих), чтобы дорогая вещь не была линейно выгоднее дешёвой — решение копить содержательно, а не арифметически очевидно."
+  "task_items": [
+    {"id": "want_music_toy", "name": "Музыкальная игрушка", "price": 60, "used_in_tasks": ["1.2", "1.3"]},
+    {"id": "want_comic", "name": "Комикс", "price": 40, "used_in_tasks": ["3.3"]}
+  ]
 }

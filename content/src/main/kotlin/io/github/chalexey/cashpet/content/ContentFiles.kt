@@ -7,7 +7,10 @@ import kotlinx.serialization.json.jsonObject
 
 /** Файлы контента из src/main/resources/content. Разбор по контрактам — [ContentLoader]. */
 object ContentFiles {
-    val ALL = listOf("tasks.json", "shop.json", "goals.json", "glossary.json", "neighbors.json", "onboarding.json")
+    val ALL = listOf(
+        "tasks.json", "shop.json", "goals.json", "jobs.json", "economy.json", "pet.json", "texts.json",
+        "glossary.json", "neighbors.json", "onboarding.json",
+    )
 
     fun read(name: String): String =
         ContentFiles::class.java.getResource("/content/$name")?.readText()
