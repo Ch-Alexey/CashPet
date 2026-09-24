@@ -23,11 +23,14 @@ jobs:
       - uses: actions/github-script@v9
         with:
           script: |
-            // Зоны — префиксы путей. Пустая строка — весь репозиторий
+            // Зоны — префиксы путей. Пустая строка — весь репозиторий.
+            // Леха и Виталик — общая зона на весь репозиторий, кроме правил одобрения:
+            // бот и CODEOWNERS меняет только Леха, иначе правила ревью меняли бы сами себя
+            const approvalRules = ['.github/workflows/auto-approve.yml', '.github/CODEOWNERS'];
             const zones = {
-              'Ch-Alexey':   [''],
-              '1Oblivious1': ['data/', 'content/', 'app/', 'docs/', 'tools/'],
-              'Alexwww228':  ['app/', 'design/', 'docs/'],
+              'Ch-Alexey':   { allow: [''], deny: [] },
+              '1Oblivious1': { allow: [''], deny: approvalRules },
+              'Alexwww228':  { allow: ['app/', 'design/', 'docs/'], deny: [] },
             };
             const pr = context.payload.pull_request;
             const author = pr.user.login;
@@ -41,7 +44,9 @@ jobs:
             });
             // При переименовании проверяем и старый путь
             const paths = files.flatMap(f => f.previous_filename ? [f.filename, f.previous_filename] : [f.filename]);
-            const outside = paths.filter(p => !allowed.some(prefix => p.startsWith(prefix)));
+            const inZone = p => allowed.allow.some(prefix => p.startsWith(prefix))
+                             && !allowed.deny.some(prefix => p.startsWith(prefix));
+            const outside = paths.filter(p => !inZone(p));
             if (outside.length > 0) {
               core.info(`Файлы вне зоны ${author}, нужен ревьюер:\n${outside.join('\n')}`);
               return;
