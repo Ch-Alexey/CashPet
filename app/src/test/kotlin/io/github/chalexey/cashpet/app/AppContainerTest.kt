@@ -37,6 +37,16 @@ class AppContainerTest {
     }
 
     @Test
+    fun `GameStore один на приложение и работает на настоящем контенте`() = runBlocking {
+        val store = context.appContainer.gameStore
+        assertSame(store, context.appContainer.gameStore)
+
+        store.open(Slot.DEMO)
+        store.delete(Slot.DEMO)                       // база общая с другими тестами — начинаем с чистого слота
+        assertEquals(null, store.open(Slot.DEMO))
+    }
+
+    @Test
     fun `настройки работают через контейнер`() = runBlocking {
         assertEquals(AppSettings(), context.appContainer.settingsRepository.settings.first())
     }
