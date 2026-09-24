@@ -1,6 +1,7 @@
 package io.github.chalexey.cashpet.app
 
 import android.content.Context
+import io.github.chalexey.cashpet.app.store.GameStore
 import io.github.chalexey.cashpet.content.ContentLoader
 import io.github.chalexey.cashpet.content.GameContent
 import io.github.chalexey.cashpet.core.engine.GameEngine
@@ -29,4 +30,7 @@ class AppContainer(context: Context) {
     val content: GameContent by lazy { ContentLoader().load() }
 
     val engine: GameEngine by lazy { GameEngine(content.economy, content.catalog) }
+
+    /** Один на приложение: все ViewModel видят одно и то же состояние игры. */
+    val gameStore: GameStore by lazy { GameStore(engine, gameRepository) }
 }
