@@ -94,6 +94,16 @@ class ContentLoaderTest {
     }
 
     @Test
+    fun `соседи — имя по ключу и советы на Плане`() {
+        assertEquals(4, content.neighbors.size)
+        val hasty = content.neighbor("toroplivy")!!
+        assertEquals("Торопливый", hasty.name)
+        assertEquals(listOf("Я бы всё сразу на одну вещь потратил!"), hasty.planTips)
+        assertEquals(emptyList<String>(), content.neighbor("dlinnous")!!.planTips)   // советов нет — на Плане не показываем
+        assertEquals(null, content.neighbor("stranger"))
+    }
+
+    @Test
     fun `фраза есть для каждой причины`() {
         assertEquals(FeedbackReason.entries.toSet(), content.texts.feedback.keys)
         assertEquals(PetReason.entries.toSet(), content.texts.petWeek.keys)

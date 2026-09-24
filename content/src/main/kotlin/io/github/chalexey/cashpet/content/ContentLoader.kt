@@ -44,6 +44,8 @@ class ContentLoader(private val read: (String) -> String = ContentFiles::read) {
             texts = parse(TEXTS, TextsFile.serializer()).toTexts(),
             onboarding = parse(ONBOARDING, OnboardingFile.serializer()).screens,
             glossary = parse(GLOSSARY, GlossaryFile.serializer()).terms,
+            neighbors = parse(NEIGHBORS, NeighborsFile.serializer()).characters
+                .map { (id, n) -> Neighbor(id = id, name = n.name, role = n.role, planTips = n.planTips) },
         )
     }
 
@@ -83,6 +85,7 @@ class ContentLoader(private val read: (String) -> String = ContentFiles::read) {
         const val TEXTS = "texts.json"
         const val ONBOARDING = "onboarding.json"
         const val GLOSSARY = "glossary.json"
+        const val NEIGHBORS = "neighbors.json"
     }
 }
 
@@ -114,3 +117,14 @@ private class OnboardingFile(val screens: List<OnboardingScreen>)
 
 @Serializable
 private class GlossaryFile(val terms: List<GlossaryTerm>)
+
+// Старые реплики lines и раздел strangers не читаем: реплики заданий теперь в tasks.json → neighbor_lines
+@Serializable
+private class NeighborsFile(val characters: Map<String, NeighborEntry>)
+
+@Serializable
+private class NeighborEntry(
+    val name: String,
+    val role: String? = null,
+    @SerialName("plan_tips") val planTips: List<String> = emptyList(),
+)

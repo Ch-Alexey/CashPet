@@ -15,7 +15,6 @@ import io.github.chalexey.cashpet.core.model.Outcome
 import io.github.chalexey.cashpet.core.model.Part
 import io.github.chalexey.cashpet.core.model.Topic
 import io.github.chalexey.cashpet.core.task.TaskDef
-import kotlinx.serialization.json.jsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -67,7 +66,8 @@ class ContentGuardTest {
                     listOfNotNull(sc.input?.placeholder, sc.input?.hint, sc.input?.emptyError, sc.input?.tooLongError)
                         .map { "onboarding.${sc.id}.input" to it }
             } +
-            content.glossary.map { "glossary.${it.id}" to it.definition }
+            content.glossary.map { "glossary.${it.id}" to it.definition } +
+            content.neighbors.flatMap { n -> n.planTips.map { "neighbors.${n.id}.plan_tips" to it } }
     }
 
     private fun violations(check: (String, String) -> String?): List<String> =
@@ -144,11 +144,20 @@ class ContentGuardTest {
 
     @Test
     fun `компетенция 1–6, соседи есть в neighbors_json`() {
-        val characters = ContentFiles.parse("neighbors.json").getValue("characters").jsonObject.keys
         for (t in tasks) {
             if (t.topic != Topic.INTRO) assertTrue(t.competence in 1..6, "${t.id}: компетенция ${t.competence}")
-            t.neighborLines.forEach { assertTrue(it.character in characters, "${t.id}: нет соседа ${it.character}") }
+            t.neighborLines.forEach { assertTrue(content.neighbor(it.character) != null, "${t.id}: нет соседа ${it.character}") }
         }
+    }
+
+    @Test
+    fun `соседи — постоянный состав, советов на Плане у Торопливого и Осторожного поровну`() {
+        // Состав фиксирован решением команды (раздел 22 рамок): новых персонажей без решения не добавляем
+        assertEquals(listOf("Торопливый", "Осторожный", "Рыжехвостик", "Длинноус"), content.neighbors.map { it.name })
+        // Совет не подсвечивается как верный: если у одного советов больше, он выглядит «главным»
+        val hasty = content.neighbor("toroplivy")!!.planTips
+        val careful = content.neighbor("ostorozhny")!!.planTips
+        assertEquals(hasty.size, careful.size, "советы на Плане: Торопливый ${hasty.size}, Осторожный ${careful.size}")
     }
 
     @Test

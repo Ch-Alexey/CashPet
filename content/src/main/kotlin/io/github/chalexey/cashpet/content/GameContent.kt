@@ -17,6 +17,18 @@ data class GameContent(
     val texts: Texts,
     val onboarding: List<OnboardingScreen>,            // экраны знакомства по порядку
     val glossary: List<GlossaryTerm>,                  // словарь в «Прогрессе»
+    val neighbors: List<Neighbor>,                     // постоянные соседи: имя для реплик в заданиях и советов на Плане
+) {
+    /** Сосед по ключу из neighbor_lines задания; null — такого нет (сторож не даст этому случиться). */
+    fun neighbor(id: String): Neighbor? = neighbors.firstOrNull { it.id == id }
+}
+
+/** Постоянный сосед (neighbors.json). Состав фиксирован — новых без решения команды не добавляем. */
+data class Neighbor(
+    val id: String,                                    // toroplivy, ostorozhny, …
+    val name: String,
+    val role: String?,
+    val planTips: List<String>,                        // совет на экране «План» по тапу на аватар; пусто — соседа там нет
 )
 
 /** 3 кота × 3 окраса для экрана внешности. */
