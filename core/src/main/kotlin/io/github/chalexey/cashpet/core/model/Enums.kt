@@ -70,7 +70,7 @@ enum class EffectKey {
 /** Что сделал ребёнок — код текста панели «что изменилось» (texts.json → feedback_reasons). */
 @Serializable
 enum class FeedbackReason {
-    PLAN_SAVED, PLAN_CONFIRMED, BOUGHT_NEED, BOUGHT_WANT, WISHLIST_ADDED, GOAL_CHOSEN,
+    PLAN_SAVED, PLAN_CONFIRMED, BOUGHT_NEED, BOUGHT_WANT, WISHLIST_ADDED, WISHLIST_REMOVED, GOAL_CHOSEN,
     DEPOSIT, WITHDRAW, GOAL_BOUGHT, TASK_REWARD, TASK_REPEAT, JOB_REWARD, WEEK_CLOSED, LOOK_CHANGED,
 }
 

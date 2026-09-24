@@ -6,6 +6,7 @@
     "bought_need": "Покупка: {item}. Это нужное",
     "bought_want": "Покупка: {item}. {petName} радуется",
     "wishlist_added": "{item} — в списке «Хочу потом»",
+    "wishlist_removed": "{item} больше не в списке «Хочу потом»",
     "goal_chosen": "Новая мечта: {item}",
     "deposit": "В копилку: {amount}. Мечта ближе",
     "withdraw": "Из копилки: {amount}. Мечта чуть дальше",
