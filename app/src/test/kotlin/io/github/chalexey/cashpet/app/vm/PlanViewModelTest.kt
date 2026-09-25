@@ -11,6 +11,7 @@ import io.github.chalexey.cashpet.core.model.PetLook
 import io.github.chalexey.cashpet.core.model.Plan
 import io.github.chalexey.cashpet.core.model.Profile
 import io.github.chalexey.cashpet.core.model.Slot
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -30,7 +31,8 @@ class PlanViewModelTest {
 
     private val content = ContentLoader().load()
     private val engine = GameEngine(content.economy, content.catalog)
-    private val store = GameStore(engine, FakeGameRepository())
+    private val repository = FakeGameRepository()
+    private val store = GameStore(engine, repository)
     private lateinit var vm: PlanViewModel
 
     private val plan get() = vm.uiState.value!!
@@ -92,6 +94,19 @@ class PlanViewModelTest {
         assertEquals(Triple(50, 25, 15), Triple(plan.need, plan.want, plan.save))
         assertEquals(10, plan.unallocated)
         assertEquals(Plan(50, 25, 15), store.state.value!!.week.plan)   // черновик переживает перезапуск
+    }
+
+    @Test
+    fun `два быстрых «+5», пока первое пишется на диск, — оба засчитаны`() {
+        newGame()
+        val save = CompletableDeferred<Unit>()
+        repository.holdSave = save
+
+        tap(Part.NEED, 2)                    // первое нажатие ждёт записи, второе — своей очереди
+        save.complete(Unit)
+
+        assertEquals(10, plan.need)
+        assertEquals(Plan(10, 0, 0), store.state.value!!.week.plan)
     }
 
     @Test

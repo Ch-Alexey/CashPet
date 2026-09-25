@@ -57,20 +57,26 @@ class ShopViewModel(
                 message.value = ActionMessage(rejection = Rejection.PlanNotConfirmed)
                 return@launch
             }
-            val missing = item.price - state.balance
-            if (missing > 0) {
-                val taken = store.dispatch(Action.Withdraw(missing))
-                if (taken is Result.Rejected) {
-                    message.value = ActionMessage(rejection = taken.reason)
-                    return@launch
-                }
+            // Недостающее — по кошельку под замком GameStore: между нажатием и снятием баланс мог измениться
+            var missing = 0
+            val taken = store.dispatch { s ->
+                missing = item.price - s.balance
+                if (missing > 0) Action.Withdraw(missing) else null
+            }
+            if (taken is Result.Rejected) {
+                message.value = ActionMessage(rejection = taken.reason)
+                return@launch
             }
             message.value = when (val bought = store.dispatch(Action.Buy(itemId))) {
                 is Result.Ok -> ActionMessage(
                     feedback = feedbackUi(bought, content, item = item.name)
                         .copy(balanceBefore = state.balance, savingsBefore = state.savings.total),
                 )
-                is Result.Rejected -> ActionMessage(rejection = bought.reason)
+                // Снятие уже прошло: монеты в кошельке — панель про снятие вместе с причиной отказа покупки
+                is Result.Rejected -> ActionMessage(
+                    feedback = (taken as? Result.Ok)?.let { feedbackUi(it, content, amount = missing) },
+                    rejection = bought.reason,
+                )
             }
         }
     }

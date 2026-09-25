@@ -63,6 +63,18 @@ class GameStore(
     }
 
     /**
+     * Действие, которое зависит от текущего состояния («+5 к плану»): [build] получает состояние уже под замком,
+     * после всех прошлых действий. Считать действие по [state] снаружи нельзя: пока прошлое пишется на диск,
+     * [state] ещё старый, и два быстрых нажатия дали бы одно. [build] вернул null — действовать нечего, результат null.
+     */
+    suspend fun dispatch(build: (GameState) -> Action?): Result? = mutex.withLock {
+        val action = build(current()) ?: return@withLock null
+        val result = engine.apply(current(), action)
+        if (result is Result.Ok) publish(result.state)
+        result
+    }
+
+    /**
      * «Ускорить» в демо: недели по [strategy] до стадии [target] тем же движком, что и обычная игра.
      * Возвращает все шаги — экран показывает итог каждой недели. Только в демо-профиле.
      */
