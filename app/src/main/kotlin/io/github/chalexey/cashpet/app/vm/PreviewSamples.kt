@@ -280,13 +280,22 @@ object PreviewSamples {
     )
 
     val adult = AdultUiState(
-        weeksPlayed = 2,
-        stage = Stage.TEEN,
-        tasksDone = 2,
-        tasksTotal = 7,
-        topicsDone = listOf(Topic.PURCHASES),
-        goalsBought = 0,
+        hasProfile = true,
+        playerName = "Лис",
+        petName = "Пончик",
         difficulty = Difficulty.EASY,
-        hasChildProfile = true,
+        stage = Stage.TEEN,
+        weeksPlayed = 2,
+        tasksDone = 3,
+        tasksTotal = 7,
+        tasksByTopic = mapOf(
+            Topic.BUDGET to TopicProgressUi(done = 0, total = 2),
+            Topic.SAVINGS to TopicProgressUi(done = 1, total = 2),
+            Topic.PURCHASES to TopicProgressUi(done = 1, total = 2),
+        ),
+        goalsBought = 0,
     )
+
+    /** Профиля ещё нет — прогресса нет, кнопки сброса и удаления неактивны. */
+    val adultNoProfile = AdultUiState()
 }

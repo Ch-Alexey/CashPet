@@ -286,14 +286,26 @@ enum class DemoNav {
     START,                                   // вышли из демо — на старт, там профиль ребёнка
 }
 
-/** Раздел взрослого после барьера — docs/01-функционал.md, раздел 8. Без оценок ребёнка. */
+/**
+ * Раздел взрослого после барьера — docs/01-функционал.md, раздел 8; п. 2.5.12 ТЗ. Прогресс открытого профиля
+ * без оценок ребёнка: сколько пройдено, но не «верно / неверно». Цели приложения и «О приложении» — в strings.xml.
+ */
 data class AdultUiState(
-    val weeksPlayed: Int,
-    val stage: Stage,
-    val tasksDone: Int,
-    val tasksTotal: Int,
-    val topicsDone: List<Topic>,             // пройденные темы
-    val goalsBought: Int,
-    val difficulty: Difficulty,
-    val hasChildProfile: Boolean,            // есть что сбрасывать
+    val hasProfile: Boolean = false,         // профиля нет — прогресса нет, сбрасывать нечего
+    val demo: Boolean = false,               // открыто демо: прогресс, сброс и удаление — демо-профиля
+    val playerName: String = "",
+    val petName: String = "",
+    val difficulty: Difficulty = Difficulty.EASY,   // сменить — после 29.09, со сбросом
+    val stage: Stage = Stage.BABY,
+    val weeksPlayed: Int = 0,
+    val tasksDone: Int = 0,
+    val tasksTotal: Int = 0,
+    val tasksByTopic: Map<Topic, TopicProgressUi> = emptyMap(),   // пройденные темы: «Сбережения — 1 из 2»
+    val goalsBought: Int = 0,
+    val navigate: AdultNav? = null,          // куда перейти после сброса или удаления; перешли — onNavigated()
 )
+
+enum class AdultNav {
+    ONBOARDING,                              // «Сбросить» — новый профиль в том же слоте (в демо — в демо)
+    START,                                   // «Удалить» — на старт
+}

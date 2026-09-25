@@ -72,6 +72,18 @@ class StartViewModelTest {
     }
 
     @Test
+    fun `профиль удалили в разделе взрослого — старт это видит, «Играть» ведёт в онбординг`() {
+        saved(Slot.CHILD)
+        val store = GameStore(engine, repository)
+        val vm = StartViewModel(store, settings)
+        assertEquals(true, vm.uiState.value.hasProfile)
+
+        runBlocking { store.delete(Slot.CHILD) }
+
+        assertEquals(StartUiState(loading = false, hasProfile = false), vm.uiState.value)
+    }
+
+    @Test
     fun `демо сбросили и перезапустили — онбординг в демо`() {
         runBlocking { settings.setDemoActive(true) }
 
