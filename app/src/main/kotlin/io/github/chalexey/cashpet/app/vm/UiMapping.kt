@@ -10,6 +10,7 @@ import io.github.chalexey.cashpet.core.model.GoalDef
 import io.github.chalexey.cashpet.core.model.GrowthIcon
 import io.github.chalexey.cashpet.core.model.Part
 import io.github.chalexey.cashpet.core.model.Stage
+import io.github.chalexey.cashpet.core.model.Topic
 import io.github.chalexey.cashpet.core.model.WeekResult
 import io.github.chalexey.cashpet.core.task.TaskDef
 
@@ -40,6 +41,14 @@ fun doneTasks(state: GameState, content: GameContent): List<TaskCardUi> =
 
 private fun taskCard(task: TaskDef) =
     TaskCardUi(taskId = task.id, title = task.title, topic = task.topic, reward = task.reward.coins)
+
+/** Задания по темам — «Сбережения: 1 из 2». Без вводного задания: это не тема финансов. Порядок — как в Topic. */
+fun tasksByTopic(state: GameState, content: GameContent): Map<Topic, TopicProgressUi> =
+    content.tasks
+        .filter { it.topic != Topic.INTRO }
+        .groupBy { it.topic }
+        .toSortedMap()
+        .mapValues { (_, tasks) -> TopicProgressUi(done = tasks.count { it.id in state.tasks }, total = tasks.size) }
 
 /** Имена игрока и кота в тексте из контента; остальные подстановки — там, где они известны. */
 fun String.withNames(state: GameState): String =
