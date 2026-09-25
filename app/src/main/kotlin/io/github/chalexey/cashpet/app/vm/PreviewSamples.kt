@@ -35,6 +35,7 @@ object PreviewSamples {
         activeTask = taskCard,
         weekNumber = 2,
         needWarning = true,
+        closeWarning = CloseWeekWarning.NEED_NOT_BOUGHT,
     )
 
     val homeSad = home.copy(

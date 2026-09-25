@@ -55,7 +55,15 @@ data class HomeUiState(
     val activeTask: TaskCardUi?,             // карточка над меню
     val weekNumber: Int,
     val needWarning: Boolean,                // нужное на этой неделе не куплено
+    val closeWarning: CloseWeekWarning?,     // что спросить перед «Завершить неделю»; null — завершать сразу
+    val weekClosed: Boolean = false,         // неделя завершена — открыть «Итог недели», потом onWeekSummaryOpened()
 )
+
+/** Мягкое предупреждение перед «Завершить неделю» (docs/01-функционал.md, раздел 4.5). Завершить можно всё равно. */
+enum class CloseWeekWarning {
+    NO_PLAN,                                 // «Плана на эту неделю нет. Составим?» — «К плану» / «Завершить так»
+    NEED_NOT_BOUGHT,                         // «На этой неделе {petName} пока без еды. Всё равно завершить?»
+}
 
 // --- План ---
 
@@ -176,6 +184,12 @@ data class GrowthIconUi(val icon: GrowthIcon, val pct: Int)   // 100 — гор�
 data class PetChangeUi(val before: PetStats, val after: PetStats, val mood: PetMood, val reasonText: String)
 
 // --- Простые экраны: договариваем с Саней (раздел 8 контрактов) ---
+
+/** Старт: «Играть» и ссылка «Для взрослых» (docs/01-функционал.md, раздел 1). */
+data class StartUiState(
+    val loading: Boolean = true,             // сохранение ещё читается — «Играть» неактивна
+    val hasProfile: Boolean = false,         // «Играть» → Дом; нет профиля — онбординг
+)
 
 /**
  * Онбординг с созданием питомца (docs/01-функционал.md, раздел 1). Экраны идут списком из onboarding.json,
