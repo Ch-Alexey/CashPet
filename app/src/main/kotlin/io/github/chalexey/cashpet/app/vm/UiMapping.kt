@@ -1,11 +1,16 @@
 package io.github.chalexey.cashpet.app.vm
 
 import io.github.chalexey.cashpet.content.GameContent
+import io.github.chalexey.cashpet.content.WeekHint
 import io.github.chalexey.cashpet.core.engine.GameEngine
 import io.github.chalexey.cashpet.core.engine.Rejection
 import io.github.chalexey.cashpet.core.engine.Result
 import io.github.chalexey.cashpet.core.model.GameState
 import io.github.chalexey.cashpet.core.model.GoalDef
+import io.github.chalexey.cashpet.core.model.GrowthIcon
+import io.github.chalexey.cashpet.core.model.Part
+import io.github.chalexey.cashpet.core.model.Stage
+import io.github.chalexey.cashpet.core.model.WeekResult
 import io.github.chalexey.cashpet.core.task.TaskDef
 
 // Общие преобразования GameState → UiState: верхняя панель, карточки заданий, подстановки.
@@ -51,6 +56,50 @@ fun feedbackUi(ok: Result.Ok, content: GameContent, amount: Int? = null, item: S
         .replace("{item}", item ?: "")
         .withNames(ok.state)
     return FeedbackUi(f.balanceBefore, f.balanceAfter, f.savingsBefore, f.savingsAfter, f.statChanges, text)
+}
+
+/**
+ * Итог недели (docs/01-функционал.md, раздел 4.6) по [r] из history: план и факт, иконки, стадия, кот, путь восстановления.
+ * [state] — состояние после этой недели: цель и имена. Нужен экрану итога и «Ускорить» в демо.
+ */
+fun weekSummaryUi(r: WeekResult, state: GameState, content: GameContent, engine: GameEngine): WeekSummaryUiState {
+    val nextStage = when (r.stageAfter) {
+        Stage.BABY -> Stage.TEEN
+        Stage.TEEN -> Stage.ADULT
+        Stage.ADULT -> null
+    }
+    // Про еду и уход говорит строка про кота, здесь — план и копилка; всё получилось — подсказки нет
+    val hint = when {
+        !r.planConfirmed -> WeekHint.NO_PLAN
+        r.mPct < 100 -> WeekHint.PLAN
+        r.sPct < 100 -> WeekHint.SAVE
+        else -> null
+    }
+    return WeekSummaryUiState(
+        weekNumber = r.number,
+        planConfirmed = r.planConfirmed,
+        rows = listOf(
+            PlanFactRowUi(Part.NEED, planned = r.plan.need, actual = r.factNeed),
+            PlanFactRowUi(Part.WANT, planned = r.plan.want, actual = r.factWant),
+            PlanFactRowUi(Part.SAVE, planned = r.plan.save, actual = r.factSaved),
+        ),
+        earned = r.earned,
+        icons = listOf(
+            GrowthIconUi(GrowthIcon.NEED, r.nPct),
+            GrowthIconUi(GrowthIcon.PLAN, r.mPct),
+            GrowthIconUi(GrowthIcon.SAVE, r.sPct),
+        ),
+        gpToNextStage = nextStage?.let { maxOf(0, content.economy.stageThresholds.getValue(it) - r.totalGp) },
+        stageUp = r.stageAfter.takeIf { it != r.stageBefore },
+        pet = PetChangeUi(
+            before = r.statsBefore,
+            after = r.statsAfter,
+            mood = engine.petMood(r.statsBefore),     // как в движке: причина недели — по показателям до падения
+            reasonText = content.texts.petWeek.getValue(r.petReason).withNames(state),
+        ),
+        goal = state.savings.activeGoalId?.let(content.catalog::goal)?.let { goalUi(it, state) },
+        recoveryHint = hint?.let { content.texts.weekHints.getValue(it).withNames(state) },
+    )
 }
 
 /** Итог последнего действия на экране: панель «что изменилось» или причина отказа. Показали — сбросили. */
