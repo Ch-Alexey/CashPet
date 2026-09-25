@@ -1,5 +1,6 @@
 package io.github.chalexey.cashpet.app.vm
 
+import io.github.chalexey.cashpet.content.ScreenKind
 import io.github.chalexey.cashpet.core.model.Difficulty
 import io.github.chalexey.cashpet.core.model.EffectKey
 import io.github.chalexey.cashpet.core.model.GrowthIcon
@@ -174,25 +175,45 @@ data class GrowthIconUi(val icon: GrowthIcon, val pct: Int)   // 100 — гор�
 /** Что стало с котом за неделю и почему — строка по pet_reasons.week из texts.json. */
 data class PetChangeUi(val before: PetStats, val after: PetStats, val mood: PetMood, val reasonText: String)
 
-// --- Простые экраны: договариваем с Саней (раздел 8 контрактов), ниже — черновик ---
+// --- Простые экраны: договариваем с Саней (раздел 8 контрактов) ---
 
-/** Онбординг, экраны 1–7 и 6а (docs/01-функционал.md, раздел 1). Тексты экранов — из onboarding.json. */
+/**
+ * Онбординг с созданием питомца (docs/01-функционал.md, раздел 1). Экраны идут списком из onboarding.json,
+ * что показывать — по [kind]; все тексты, подсказки и ошибки — оттуда же, уже с подстановками.
+ */
 data class OnboardingUiState(
-    val screen: OnboardingScreen,
-    val playerName: String,
-    val petName: String,
-    val look: PetLook?,                      // выбранный вариант в сетке 3 × 3
+    val kind: ScreenKind,                    // INFO, PLAYER_NAME, LOOK, PET_NAME, DIFFICULTY
+    val step: Int,                           // «2 из 8»
+    val steps: Int,
+    val text: String,
+    val bullets: List<BulletUi>,             // «Нужно · Хочу · Отложить»
+    val finePrint: String?,
+    val input: NameInputUi?,                 // только PLAYER_NAME и PET_NAME
+    val look: PetLook,                       // выбранный вариант в сетке 3 × 3 — на LOOK и в превью кота
     val breeds: List<PetOptionUi>,
     val colors: List<PetOptionUi>,
-    val difficulty: Difficulty?,
-    val nameError: NameError?,               // ошибка в поле имени
-    val canContinue: Boolean,
-    val canSkip: Boolean,                    // экраны 5 и 6 можно пропустить
+    val choices: List<DifficultyChoiceUi>,   // только DIFFICULTY: выбор сразу ведёт дальше
+    val button: String?,                     // null — кнопки нет (на DIFFICULTY выбирают вариант)
+    val petReply: String?,                   // реплика кота, когда имя подходит
+    val canSkip: Boolean,                    // «Пропустить» — экраны «три решения» и «как растёт»
+    val canGoBack: Boolean,
+    val creating: Boolean = false,           // профиль сохраняется — кнопки неактивны
+    val finished: Boolean = false,           // профиль создан — открыть задание [firstTaskId]
+    val firstTaskId: String? = null,
 )
 
-enum class OnboardingScreen { PLAYER_NAME, WELCOME, LOOK, PET_NAME, DECISIONS, GROWTH, DIFFICULTY, READY }
+data class BulletUi(val term: String, val text: String)
 
-enum class NameError { EMPTY, TOO_LONG }
+/** Поле имени: текст, подсказки и ошибка — из onboarding.json. [error] появляется после нажатия «Дальше». */
+data class NameInputUi(
+    val value: String,
+    val placeholder: String,
+    val hint: String?,
+    val maxLength: Int,
+    val error: String?,
+)
+
+data class DifficultyChoiceUi(val difficulty: Difficulty, val label: String, val selected: Boolean)
 
 data class PetOptionUi(val id: String, val name: String)
 

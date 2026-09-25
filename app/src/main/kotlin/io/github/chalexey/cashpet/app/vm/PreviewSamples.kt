@@ -1,5 +1,6 @@
 package io.github.chalexey.cashpet.app.vm
 
+import io.github.chalexey.cashpet.content.ScreenKind
 import io.github.chalexey.cashpet.core.model.Difficulty
 import io.github.chalexey.cashpet.core.model.EffectKey
 import io.github.chalexey.cashpet.core.model.GrowthIcon
@@ -160,20 +161,55 @@ object PreviewSamples {
     )
 
     val onboardingLook = OnboardingUiState(
-        screen = OnboardingScreen.LOOK,
-        playerName = "Лис",
-        petName = "",
+        kind = ScreenKind.LOOK,
+        step = 3, steps = 8,
+        text = "Выбери, каким будет твой питомец: форму и окрас",
+        bullets = emptyList(),
+        finePrint = null,
+        input = null,
         look = PetLook("fluffy", "ginger"),
         breeds = listOf(PetOptionUi("fluffy", "Пушистый"), PetOptionUi("smooth", "Гладкошёрстный"), PetOptionUi("lop", "Вислоухий")),
         colors = listOf(PetOptionUi("ginger", "Рыжий в полоску"), PetOptionUi("grey", "Серый в пятнышко"), PetOptionUi("black", "Чёрный однотонный")),
-        difficulty = null,
-        nameError = null,
-        canContinue = true,
+        choices = emptyList(),
+        button = "Готово",
+        petReply = null,
         canSkip = false,
+        canGoBack = true,
     )
 
     val onboardingPetNameError = onboardingLook.copy(
-        screen = OnboardingScreen.PET_NAME, petName = "", nameError = NameError.EMPTY, canContinue = false,
+        kind = ScreenKind.PET_NAME,
+        step = 4,
+        text = "Как его зовут? Придумай имя!",
+        input = NameInputUi(value = "", placeholder = "Например: Пончик", hint = "Имя может быть придуманным",
+            maxLength = 12, error = "Напиши хотя бы одну букву"),
+        button = "Так и назовём",
+    )
+
+    val onboardingDecisions = onboardingLook.copy(
+        kind = ScreenKind.INFO,
+        step = 5,
+        text = "Каждую неделю тебе решать, на что потратить монеты.",
+        bullets = listOf(
+            BulletUi("Нужно", "без этого не обойтись, например еда и уход"),
+            BulletUi("Хочу", "приятные мелочи, игрушки и лакомства"),
+            BulletUi("Отложить", "монеты в копилку на большую мечту"),
+        ),
+        finePrint = "Монеты в игре игровые, настоящие деньги не нужны",
+        button = "Понятно",
+        canSkip = true,
+    )
+
+    val onboardingDifficulty = onboardingLook.copy(
+        kind = ScreenKind.DIFFICULTY,
+        step = 7,
+        text = "Как будем играть?",
+        finePrint = "Поменять потом может взрослый",
+        choices = listOf(
+            DifficultyChoiceUi(Difficulty.EASY, "Попроще", selected = false),
+            DifficultyChoiceUi(Difficulty.HARD, "Посложнее", selected = false),
+        ),
+        button = null,
     )
 
     val progress = ProgressUiState(
