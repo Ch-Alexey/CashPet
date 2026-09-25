@@ -10,7 +10,6 @@ import io.github.chalexey.cashpet.app.store.GameStore
 import io.github.chalexey.cashpet.content.GameContent
 import io.github.chalexey.cashpet.core.engine.Action
 import io.github.chalexey.cashpet.core.engine.GameEngine
-import io.github.chalexey.cashpet.core.engine.Rejection
 import io.github.chalexey.cashpet.core.engine.Result
 import io.github.chalexey.cashpet.core.model.GameState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,13 +30,11 @@ class SavingsViewModel(
     private val store: GameStore,
 ) : ViewModel() {
 
-    private data class Message(val feedback: FeedbackUi? = null, val rejection: Rejection? = null)
-
-    private val message = MutableStateFlow(Message())
+    private val message = MutableStateFlow(ActionMessage())
 
     val uiState: StateFlow<SavingsUiState?> = combine(store.state, message) { state, msg ->
         state?.let { toUi(it, msg) }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, store.state.value?.let { toUi(it, Message()) })
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, store.state.value?.let { toUi(it, ActionMessage()) })
 
     fun chooseGoal(goalId: String) = act(Action.ChooseGoal(goalId), item = content.catalog.goal(goalId)?.name)
 
@@ -63,19 +60,19 @@ class SavingsViewModel(
 
     /** Панель или сообщение показаны — убрать. */
     fun onMessageShown() {
-        message.value = Message()
+        message.value = ActionMessage()
     }
 
     private fun act(action: Action, amount: Int? = null, item: String? = null) {
         viewModelScope.launch {
             message.value = when (val result = store.dispatch(action)) {
-                is Result.Ok -> Message(feedback = feedbackUi(result, content, amount, item))
-                is Result.Rejected -> Message(rejection = result.reason)
+                is Result.Ok -> ActionMessage(feedback = feedbackUi(result, content, amount, item))
+                is Result.Rejected -> ActionMessage(rejection = result.reason)
             }
         }
     }
 
-    private fun toUi(state: GameState, msg: Message): SavingsUiState {
+    private fun toUi(state: GameState, msg: ActionMessage): SavingsUiState {
         val active = state.savings.activeGoalId?.let(content.catalog::goal)
         return SavingsUiState(
             top = topBar(state, content),

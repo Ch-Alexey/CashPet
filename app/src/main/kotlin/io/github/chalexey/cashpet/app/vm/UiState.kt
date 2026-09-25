@@ -94,6 +94,8 @@ data class ShopUiState(
     val wishlist: List<ShopItemUi>,          // «Хочу потом»
     val planLeftNeed: Int?,                  // напоминание о плане в карточке товара
     val planLeftWant: Int?,
+    val feedback: FeedbackUi? = null,        // панель «что изменилось» после покупки или «Хочу потом»
+    val rejection: Rejection? = null,        // «Сначала план», «Нужно 30, а есть 20. Что можно сделать?»
 )
 
 data class ShopItemUi(
@@ -147,6 +149,8 @@ data class TasksUiState(
     val done: List<TaskCardUi>,
     val jobsLeft: Int,                       // подработок осталось на этой неделе
     val jobReward: Int,
+    val feedback: FeedbackUi? = null,        // панель после подработки
+    val rejection: Rejection? = null,        // лимит подработок на неделю
 )
 
 data class TaskPlayUiState(
@@ -160,6 +164,8 @@ data class TaskPlayUiState(
     val options: List<OptionUi>,
     val result: ChoiceResultUi?,             // null — выбора ещё не было
     val neighborLine: NeighborTipUi?,
+    val finished: Boolean = false,           // задание пройдено — панель с наградой, потом назад
+    val feedback: FeedbackUi? = null,        // награда на настоящий баланс или «ещё раз, без монет»
 )
 
 data class OptionUi(val id: String, val label: String)
@@ -171,6 +177,7 @@ data class ChoiceResultUi(
     val canRetry: Boolean,                   // кнопка «Попробовать иначе»
     val recovery: String?,
     val followupButtons: List<String>,       // диалог варианта-заглушки
+    val followupPrompt: String? = null,      // вопрос диалога: «Что делаем?»
 )
 
 // --- Итог недели ---

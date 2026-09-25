@@ -59,6 +59,7 @@ class ContentGuardTest {
             content.texts.feedback.map { (k, v) -> "texts.feedback.$k" to v } +
             content.texts.petWeek.map { (k, v) -> "texts.week.$k" to v } +
             content.texts.petNow.map { (k, v) -> "texts.now.$k" to v } +
+            content.texts.weekHints.map { (k, v) -> "texts.week_hints.$k" to v } +
             content.onboarding.flatMap { sc ->
                 listOfNotNull(sc.text, sc.finePrint, sc.button, sc.petReply).map { "onboarding.${sc.id}" to it } +
                     sc.bullets.map { "onboarding.${sc.id}.bullet" to it.text } +
@@ -232,6 +233,7 @@ class ContentGuardTest {
         assertEquals(FeedbackReason.entries.toSet(), content.texts.feedback.keys, "texts.json → feedback_reasons")
         assertEquals(PetReason.entries.toSet(), content.texts.petWeek.keys, "texts.json → pet_reasons.week")
         assertEquals(PetReason.entries.toSet(), content.texts.petNow.keys, "texts.json → pet_reasons.now")
+        assertEquals(WeekHint.entries.toSet(), content.texts.weekHints.keys, "texts.json → week_hints")
     }
 
     @Test

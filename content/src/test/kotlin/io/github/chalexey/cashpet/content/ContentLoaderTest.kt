@@ -108,6 +108,7 @@ class ContentLoaderTest {
         assertEquals(FeedbackReason.entries.toSet(), content.texts.feedback.keys)
         assertEquals(PetReason.entries.toSet(), content.texts.petWeek.keys)
         assertEquals(PetReason.entries.toSet(), content.texts.petNow.keys)
+        assertEquals(WeekHint.entries.toSet(), content.texts.weekHints.keys)
         assertEquals("Покупка: {item}. Это нужное", content.texts.feedback[FeedbackReason.BOUGHT_NEED])
     }
 
