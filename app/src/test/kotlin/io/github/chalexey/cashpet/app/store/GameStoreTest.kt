@@ -2,12 +2,11 @@ package io.github.chalexey.cashpet.app.store
 
 import io.github.chalexey.cashpet.content.ContentLoader
 import io.github.chalexey.cashpet.core.engine.Action
+import io.github.chalexey.cashpet.app.FakeGameRepository
 import io.github.chalexey.cashpet.core.engine.GameEngine
-import io.github.chalexey.cashpet.core.engine.GameRepository
 import io.github.chalexey.cashpet.core.engine.Rejection
 import io.github.chalexey.cashpet.core.engine.Result
 import io.github.chalexey.cashpet.core.model.Difficulty
-import io.github.chalexey.cashpet.core.model.GameState
 import io.github.chalexey.cashpet.core.model.PetLook
 import io.github.chalexey.cashpet.core.model.Plan
 import io.github.chalexey.cashpet.core.model.Profile
@@ -25,26 +24,11 @@ import org.junit.Test
 
 class GameStoreTest {
 
-    /** Хранилище в памяти; [failSave] — запись на диск «падает». */
-    private class FakeRepository : GameRepository {
-        val saved = mutableMapOf<Slot, GameState>()
-        var saves = 0
-        var failSave = false
-        override suspend fun load(slot: Slot) = saved[slot]
-        override suspend fun save(state: GameState) {
-            if (failSave) error("диск недоступен")
-            saves++
-            saved[state.profile.slot] = state
-        }
-        override suspend fun delete(slot: Slot) {
-            saved.remove(slot)
-        }
-    }
 
     // Настоящий контент из content/src/main/resources — заодно проверка, что всё собирается вместе
     private val content = ContentLoader().load()
     private val engine = GameEngine(content.economy, content.catalog)
-    private val repository = FakeRepository()
+    private val repository = FakeGameRepository()
     private val store = GameStore(engine, repository)
 
     private val child = Profile(playerName = "Лис", difficulty = Difficulty.EASY, slot = Slot.CHILD)

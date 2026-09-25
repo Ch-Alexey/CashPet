@@ -3,10 +3,9 @@ package io.github.chalexey.cashpet.app.vm
 import io.github.chalexey.cashpet.app.store.GameStore
 import io.github.chalexey.cashpet.content.ContentLoader
 import io.github.chalexey.cashpet.content.ScreenKind
+import io.github.chalexey.cashpet.app.FakeGameRepository
 import io.github.chalexey.cashpet.core.engine.GameEngine
-import io.github.chalexey.cashpet.core.engine.GameRepository
 import io.github.chalexey.cashpet.core.model.Difficulty
-import io.github.chalexey.cashpet.core.model.GameState
 import io.github.chalexey.cashpet.core.model.PetLook
 import io.github.chalexey.cashpet.core.model.Slot
 import kotlinx.coroutines.Dispatchers
@@ -26,19 +25,9 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingViewModelTest {
 
-    private class FakeRepository : GameRepository {
-        val saved = mutableMapOf<Slot, GameState>()
-        override suspend fun load(slot: Slot) = saved[slot]
-        override suspend fun save(state: GameState) {
-            saved[state.profile.slot] = state
-        }
-        override suspend fun delete(slot: Slot) {
-            saved.remove(slot)
-        }
-    }
 
     private val content = ContentLoader().load()
-    private val repository = FakeRepository()
+    private val repository = FakeGameRepository()
     private val store = GameStore(GameEngine(content.economy, content.catalog), repository)
     private lateinit var vm: OnboardingViewModel
 
