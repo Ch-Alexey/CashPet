@@ -180,6 +180,7 @@ object PreviewSamples {
         ),
         goal = house,
         recoveryHint = null,
+        stageProgressPct = 25,
     )
 
     /** Плана не было: «План удался» не горит, путь восстановления из week_hints. */
@@ -269,14 +270,20 @@ object PreviewSamples {
         totalGp = 200,
         gpToNextStage = 150,
         tasksByTopic = mapOf(
-            Topic.PURCHASES to TopicProgressUi(done = 1, total = 2),
             Topic.BUDGET to TopicProgressUi(done = 0, total = 2),
             Topic.SAVINGS to TopicProgressUi(done = 0, total = 2),
+            Topic.PURCHASES to TopicProgressUi(done = 1, total = 2),
         ),
         goal = house,
         boughtGoals = emptyList(),
         lastWeek = weekSummary,
         weeks = listOf(WeekLineUi(1, 100, Stage.BABY), WeekLineUi(2, 100, Stage.TEEN)),
+        nextStage = Stage.ADULT,
+        stageProgressPct = 25,
+        glossary = listOf(
+            GlossaryTermUi("coins", "Монеты", "Игровые деньги Котляндии. Настоящих денег в игре нет."),
+            GlossaryTermUi("stage", "Стадия", "Каким становится Пончик, когда решения регулярно разумные."),
+        ),
     )
 
     val adult = AdultUiState(

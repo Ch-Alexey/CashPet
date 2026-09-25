@@ -193,6 +193,7 @@ data class WeekSummaryUiState(
     val pet: PetChangeUi,
     val goal: GoalUi?,
     val recoveryHint: String?,
+    val stageProgressPct: Int = 0,           // полоска «до следующей стадии», 0..100; Взрослый — 100
 )
 
 data class PlanFactRowUi(val part: Part, val planned: Int, val actual: Int)
@@ -251,17 +252,25 @@ data class DifficultyChoiceUi(val difficulty: Difficulty, val label: String, val
 
 data class PetOptionUi(val id: String, val name: String)
 
-/** Прогресс (📈): стадия, задания по темам, цели, недели, словарь — docs/01-функционал.md, раздел 6. */
+/**
+ * Прогресс (📈): стадия, задания по темам, цели, недели, словарь — docs/01-функционал.md, раздел 6; п. 2.5.11 ТЗ.
+ * Ребёнку — полоска и силуэт следующей стадии; точные очки роста — для взрослого (docs/02-экономика.md).
+ */
 data class ProgressUiState(
     val stage: Stage,
     val totalGp: Int,
-    val gpToNextStage: Int?,
+    val gpToNextStage: Int?,                 // null — уже Взрослый
     val tasksByTopic: Map<Topic, TopicProgressUi>,
     val goal: GoalUi?,
     val boughtGoals: List<GoalUi>,
-    val lastWeek: WeekSummaryUiState?,
+    val lastWeek: WeekSummaryUiState?,       // null — закрытых недель ещё нет
     val weeks: List<WeekLineUi>,
+    val nextStage: Stage? = null,            // силуэт следующей стадии; null — уже Взрослый
+    val stageProgressPct: Int = 0,           // полоска «до следующей стадии», 0..100
+    val glossary: List<GlossaryTermUi> = emptyList(),   // словарь — из glossary.json, с подстановками
 )
+
+data class GlossaryTermUi(val id: String, val term: String, val definition: String)
 
 data class TopicProgressUi(val done: Int, val total: Int)
 
