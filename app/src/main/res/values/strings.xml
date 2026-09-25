@@ -1,6 +1,18 @@
 <resources>
-    <string name="app_name">CashPet</string>
-    <string name="skeleton_title">CashPet</string>
-    <string name="skeleton_tasks">Заданий в контенте: %1$d</string>
-    <string name="skeleton_note">Каркас проекта. Экраны появятся здесь.</string>
+<string name="app_name">CashPet</string>
+<string name="skeleton_title">CashPet</string>
+<string name="skeleton_tasks">Заданий в контенте: %1$d</string>
+<string name="skeleton_note">Игра про план, покупки и мечту.</string>
+<string name="feedback_balance">Баланс</string>
+<string name="feedback_savings">Копилка</string>
+<string name="feedback_arrow">%1$d → %2$d (%3$s%4$d)</string>
+<string name="stat_satiety">Сытость</string>
+<string name="stat_care">Уход</string>
+<string name="stat_mood">Настроение</string>
+<string name="home_week">Неделя %1$d</string>
+<string name="home_close_week">Завершить неделю</string>
+<string name="home_need_warning">На этой неделе кот пока без нужного</string>
+<string name="home_no_task">Активных заданий нет</string>
+<string name="home_goal_placeholder">Выбери мечту</string>
+<string name="nav_home">Дом</string><string name="nav_plan">План</string><string name="nav_shop">Магазин</string><string name="nav_savings">Копилка</string><string name="nav_tasks">Задания</string>
 </resources>
