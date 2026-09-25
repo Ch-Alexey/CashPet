@@ -208,6 +208,7 @@ data class PetChangeUi(val before: PetStats, val after: PetStats, val mood: PetM
 data class StartUiState(
     val loading: Boolean = true,             // сохранение ещё читается — «Играть» неактивна
     val hasProfile: Boolean = false,         // «Играть» → Дом; нет профиля — онбординг
+    val demo: Boolean = false,               // открыт демо-профиль (демо не закрыли до перезапуска): онбординг — в демо
 )
 
 /**
@@ -265,6 +266,25 @@ data class ProgressUiState(
 data class TopicProgressUi(val done: Int, val total: Int)
 
 data class WeekLineUi(val weekNumber: Int, val gp: Int, val stageAfter: Stage)
+
+/**
+ * Демо-режим (docs/01-функционал.md, раздел 9): отдельный демо-профиль, «Ускорить», «Сбросить демо», «Выйти из демо».
+ * Плашку «Демо» с кнопками экран показывает поверх Дома, пока [active].
+ */
+data class DemoUiState(
+    val active: Boolean = false,             // открыт демо-профиль
+    val stage: Stage? = null,                // null — демо-профиля ещё нет
+    val canSpeedUp: Boolean = false,         // кот ещё не Взрослый и прогон не идёт
+    val running: Boolean = false,            // «Ускорить» считает — кнопки неактивны
+    val weeks: List<WeekSummaryUiState> = emptyList(),   // итоги недель прогона: показать по очереди, потом onWeeksShown()
+    val navigate: DemoNav? = null,           // куда перейти после кнопки; перешли — onNavigated()
+)
+
+enum class DemoNav {
+    HOME,                                    // демо-профиль есть — продолжаем
+    ONBOARDING,                              // демо-профиля нет или сбросили — онбординг в демо
+    START,                                   // вышли из демо — на старт, там профиль ребёнка
+}
 
 /** Раздел взрослого после барьера — docs/01-функционал.md, раздел 8. Без оценок ребёнка. */
 data class AdultUiState(

@@ -1,12 +1,9 @@
 package io.github.chalexey.cashpet.app.vm
 
-import io.github.chalexey.cashpet.data.SettingsDao
-import io.github.chalexey.cashpet.data.SettingsEntity
+import io.github.chalexey.cashpet.app.FakeSettingsDao
 import io.github.chalexey.cashpet.data.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -18,16 +15,6 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
-
-    /** Таблица настроек в памяти — без Room. */
-    private class FakeSettingsDao : SettingsDao {
-        val row = MutableStateFlow<SettingsEntity?>(null)
-        override suspend fun get() = row.value
-        override fun observe(): Flow<SettingsEntity?> = row
-        override suspend fun upsert(entity: SettingsEntity) {
-            row.value = entity
-        }
-    }
 
     private val dao = FakeSettingsDao()
     private lateinit var viewModel: SettingsViewModel

@@ -15,6 +15,7 @@ data class AppSettings(
     val sound: Boolean = true,
     val animations: Boolean = true,
     val seenHints: Set<String> = emptySet(),      // id подсказок, которые уже показали при первом открытии раздела
+    val demoActive: Boolean = false,              // открыт демо-профиль: после перезапуска продолжаем демо, а не профиль ребёнка
 )
 
 /** Таблица из одной строки с id = 0. */
@@ -24,6 +25,7 @@ data class SettingsEntity(
     val sound: Boolean,
     val animations: Boolean,
     @ColumnInfo(name = "seen_hints") val seenHints: String,   // JSON-массив id
+    @ColumnInfo(name = "demo_active", defaultValue = "0") val demoActive: Boolean = false,   // с версии 2 базы
 ) {
     companion object {
         const val SINGLE_ROW_ID = 0
@@ -53,6 +55,8 @@ class SettingsRepository(private val dao: SettingsDao) {
 
     suspend fun markHintSeen(hintId: String) = update { it.copy(seenHints = it.seenHints + hintId) }
 
+    suspend fun setDemoActive(on: Boolean) = update { it.copy(demoActive = on) }
+
     private suspend fun update(change: (AppSettings) -> AppSettings) {
         val current = dao.get()?.toSettings() ?: AppSettings()
         dao.upsert(change(current).toEntity())
@@ -62,11 +66,13 @@ class SettingsRepository(private val dao: SettingsDao) {
         sound = sound,
         animations = animations,
         seenHints = Json.decodeFromString<List<String>>(seenHints).toSet(),
+        demoActive = demoActive,
     )
 
     private fun AppSettings.toEntity() = SettingsEntity(
         sound = sound,
         animations = animations,
         seenHints = Json.encodeToString(seenHints.sorted()),
+        demoActive = demoActive,
     )
 }

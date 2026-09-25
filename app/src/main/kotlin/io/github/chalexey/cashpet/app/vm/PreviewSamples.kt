@@ -195,6 +195,16 @@ object PreviewSamples {
         recoveryHint = "Следующую неделю можно начать с плана",
     )
 
+    /** Плашка «Демо» на Доме: кот Подросток, «Ускорить» доступно. */
+    val demo = DemoUiState(active = true, stage = Stage.TEEN, canSpeedUp = true)
+
+    /** После «Ускорить»: итоги недель прогона — показать по очереди. */
+    val demoAfterSpeedUp = demo.copy(
+        stage = Stage.ADULT,
+        canSpeedUp = false,
+        weeks = listOf(weekSummary.copy(weekNumber = 3, stageUp = null), weekSummary.copy(weekNumber = 4, stageUp = Stage.ADULT)),
+    )
+
     val feedback = FeedbackUi(
         balanceBefore = 115, balanceAfter = 100,
         savingsBefore = 55, savingsAfter = 55,

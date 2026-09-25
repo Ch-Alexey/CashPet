@@ -52,6 +52,17 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `демо открыто — флаг сохраняется, остальные настройки не меняются`() = runBlocking {
+        settings.setSound(false)
+
+        settings.setDemoActive(true)
+        assertEquals(AppSettings(sound = false, demoActive = true), settings.settings.first())
+
+        settings.setDemoActive(false)
+        assertEquals(false, settings.settings.first().demoActive)
+    }
+
+    @Test
     fun `удаление профиля не сбрасывает настройки`() = runBlocking {
         val games = RoomGameRepository(db.gameStateDao())
         settings.setAnimations(false)
