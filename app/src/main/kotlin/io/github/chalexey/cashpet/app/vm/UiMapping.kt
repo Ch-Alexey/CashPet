@@ -2,9 +2,11 @@ package io.github.chalexey.cashpet.app.vm
 
 import io.github.chalexey.cashpet.content.GameContent
 import io.github.chalexey.cashpet.core.engine.GameEngine
+import io.github.chalexey.cashpet.core.engine.Rejection
 import io.github.chalexey.cashpet.core.engine.Result
 import io.github.chalexey.cashpet.core.model.GameState
 import io.github.chalexey.cashpet.core.model.GoalDef
+import io.github.chalexey.cashpet.core.task.TaskDef
 
 // Общие преобразования GameState → UiState: верхняя панель, карточки заданий, подстановки.
 // Нужны почти всем ViewModel, поэтому здесь, а не в каждой
@@ -25,7 +27,14 @@ fun topBar(state: GameState, content: GameContent): TopBarUi {
 fun openTasks(state: GameState, content: GameContent, engine: GameEngine): List<TaskCardUi> =
     content.tasks
         .filter { engine.isTaskOpen(state, it.id) && it.id !in state.tasks }
-        .map { TaskCardUi(taskId = it.id, title = it.title, topic = it.topic, reward = it.reward.coins) }
+        .map(::taskCard)
+
+/** Пройденные задания — в порядке tasks.json. Не исчезают, их можно пройти ещё раз без монет. */
+fun doneTasks(state: GameState, content: GameContent): List<TaskCardUi> =
+    content.tasks.filter { it.id in state.tasks }.map(::taskCard)
+
+private fun taskCard(task: TaskDef) =
+    TaskCardUi(taskId = task.id, title = task.title, topic = task.topic, reward = task.reward.coins)
 
 /** Имена игрока и кота в тексте из контента; остальные подстановки — там, где они известны. */
 fun String.withNames(state: GameState): String =
@@ -43,6 +52,9 @@ fun feedbackUi(ok: Result.Ok, content: GameContent, amount: Int? = null, item: S
         .withNames(ok.state)
     return FeedbackUi(f.balanceBefore, f.balanceAfter, f.savingsBefore, f.savingsAfter, f.statChanges, text)
 }
+
+/** Итог последнего действия на экране: панель «что изменилось» или причина отказа. Показали — сбросили. */
+data class ActionMessage(val feedback: FeedbackUi? = null, val rejection: Rejection? = null)
 
 /** Карточка цели: «накоплено N из стоимости», полоска из клеточек по 10. Копилка общая — N у всех целей одно. */
 fun goalUi(goal: GoalDef, state: GameState): GoalUi {

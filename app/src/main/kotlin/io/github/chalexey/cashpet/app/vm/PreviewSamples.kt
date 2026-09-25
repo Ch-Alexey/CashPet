@@ -132,6 +132,34 @@ object PreviewSamples {
         ),
     )
 
+    /** Вариант-заглушка: диалог с вопросом и кнопками. */
+    val taskPlayStub = taskPlay.copy(
+        result = ChoiceResultUi(
+            consequence = null,
+            effects = emptyMap(),
+            feedback = "Половинки не продаются: монет хватает на что-то одно",
+            canRetry = false,
+            recovery = null,
+            followupButtons = listOf("Купить корм", "Мяч — в «Хочу потом»"),
+            followupPrompt = "Что делаем?",
+        ),
+    )
+
+    /** Задание пройдено: награда на настоящий баланс — панель «что изменилось». */
+    val taskPlayFinished = taskPlay.copy(
+        wallet = 0,
+        result = ChoiceResultUi(
+            consequence = "Миска полная, Пончик радуется",
+            effects = mapOf(EffectKey.WALLET to -30, EffectKey.SATIETY to 40),
+            feedback = "Еда — это нужное. Мяч можно купить в другой раз",
+            canRetry = false,
+            recovery = null,
+            followupButtons = emptyList(),
+        ),
+        finished = true,
+        feedback = FeedbackUi(100, 115, 0, 0, emptyMap(), "Задание пройдено. Награда: 15"),
+    )
+
     val weekSummary = WeekSummaryUiState(
         weekNumber = 2,
         planConfirmed = true,
@@ -152,6 +180,19 @@ object PreviewSamples {
         ),
         goal = house,
         recoveryHint = null,
+    )
+
+    /** Плана не было: «План удался» не горит, путь восстановления из week_hints. */
+    val weekSummaryNoPlan = weekSummary.copy(
+        planConfirmed = false,
+        rows = listOf(
+            PlanFactRowUi(Part.NEED, planned = 0, actual = 30),
+            PlanFactRowUi(Part.WANT, planned = 0, actual = 15),
+            PlanFactRowUi(Part.SAVE, planned = 0, actual = 0),
+        ),
+        icons = listOf(GrowthIconUi(GrowthIcon.NEED, 50), GrowthIconUi(GrowthIcon.PLAN, 0), GrowthIconUi(GrowthIcon.SAVE, 0)),
+        stageUp = null,
+        recoveryHint = "Следующую неделю можно начать с плана",
     )
 
     val feedback = FeedbackUi(

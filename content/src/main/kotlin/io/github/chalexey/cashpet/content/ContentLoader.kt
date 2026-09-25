@@ -66,6 +66,7 @@ class ContentLoader(private val read: (String) -> String = ContentFiles::read) {
         feedback = feedbackReasons.toEnumKeys("feedback_reasons", FeedbackReason.entries),
         petWeek = petReasons.week.toEnumKeys("pet_reasons.week", PetReason.entries),
         petNow = petReasons.now.toEnumKeys("pet_reasons.now", PetReason.entries),
+        weekHints = weekHints.toEnumKeys("week_hints", WeekHint.entries),
     )
 
     // В texts.json ключи строчные (bought_need), в коде — имена перечислений (BOUGHT_NEED)
@@ -107,6 +108,7 @@ private class JobsFile(val jobs: List<JobDef>)
 private class TextsFile(
     @SerialName("feedback_reasons") val feedbackReasons: Map<String, String>,
     @SerialName("pet_reasons") val petReasons: PetReasonsFile,
+    @SerialName("week_hints") val weekHints: Map<String, String>,
 )
 
 @Serializable

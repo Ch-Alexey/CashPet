@@ -43,7 +43,18 @@ data class Texts(
     val feedback: Map<FeedbackReason, String>,         // панель «что изменилось»
     val petWeek: Map<PetReason, String>,               // строка про кота на итоге недели
     val petNow: Map<PetReason, String>,                // карточка кота среди недели
+    val weekHints: Map<WeekHint, String>,              // путь восстановления на итоге недели
 )
+
+/**
+ * Что предложить на следующую неделю (docs/01-функционал.md, раздел 4.6): путь восстановления вместо оценки.
+ * Про еду и уход подсказки нет — это уже говорит строка про кота из pet_reasons.week.
+ */
+enum class WeekHint {
+    NO_PLAN,                                           // плана не было
+    PLAN,                                              // план был, траты вышли за допуск
+    SAVE,                                              // отложили меньше плана
+}
 
 /** Что делает экран онбординга (docs/01-функционал.md, раздел 1). */
 @Serializable
