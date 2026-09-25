@@ -5,6 +5,7 @@ import io.github.chalexey.cashpet.content.WeekHint
 import io.github.chalexey.cashpet.core.engine.GameEngine
 import io.github.chalexey.cashpet.core.engine.Rejection
 import io.github.chalexey.cashpet.core.engine.Result
+import io.github.chalexey.cashpet.core.model.EconomyConfig
 import io.github.chalexey.cashpet.core.model.GameState
 import io.github.chalexey.cashpet.core.model.GoalDef
 import io.github.chalexey.cashpet.core.model.GrowthIcon
@@ -72,11 +73,6 @@ fun feedbackUi(ok: Result.Ok, content: GameContent, amount: Int? = null, item: S
  * [state] — состояние после этой недели: цель и имена. Нужен экрану итога и «Ускорить» в демо.
  */
 fun weekSummaryUi(r: WeekResult, state: GameState, content: GameContent, engine: GameEngine): WeekSummaryUiState {
-    val nextStage = when (r.stageAfter) {
-        Stage.BABY -> Stage.TEEN
-        Stage.TEEN -> Stage.ADULT
-        Stage.ADULT -> null
-    }
     // Про еду и уход говорит строка про кота, здесь — план и копилка; всё получилось — подсказки нет
     val hint = when {
         !r.planConfirmed -> WeekHint.NO_PLAN
@@ -98,7 +94,7 @@ fun weekSummaryUi(r: WeekResult, state: GameState, content: GameContent, engine:
             GrowthIconUi(GrowthIcon.PLAN, r.mPct),
             GrowthIconUi(GrowthIcon.SAVE, r.sPct),
         ),
-        gpToNextStage = nextStage?.let { maxOf(0, content.economy.stageThresholds.getValue(it) - r.totalGp) },
+        gpToNextStage = gpToNextStage(r.totalGp, r.stageAfter, content.economy),
         stageUp = r.stageAfter.takeIf { it != r.stageBefore },
         pet = PetChangeUi(
             before = r.statsBefore,
@@ -108,8 +104,31 @@ fun weekSummaryUi(r: WeekResult, state: GameState, content: GameContent, engine:
         ),
         goal = state.savings.activeGoalId?.let(content.catalog::goal)?.let { goalUi(it, state) },
         recoveryHint = hint?.let { content.texts.weekHints.getValue(it).withNames(state) },
+        stageProgressPct = stageProgressPct(r.totalGp, r.stageAfter, content.economy),
     )
 }
+
+/** Следующая стадия; null — уже Взрослый. */
+fun nextStage(stage: Stage): Stage? = when (stage) {
+    Stage.BABY -> Stage.TEEN
+    Stage.TEEN -> Stage.ADULT
+    Stage.ADULT -> null
+}
+
+/** Сколько очков роста до следующей стадии; null — уже Взрослый. Пороги — из economy.json. */
+fun gpToNextStage(totalGp: Int, stage: Stage, economy: EconomyConfig): Int? =
+    nextStage(stage)?.let { maxOf(0, threshold(it, economy) - totalGp) }
+
+/** Полоска «до следующей стадии»: от порога текущей стадии до порога следующей, 0..100; Взрослый — 100. */
+fun stageProgressPct(totalGp: Int, stage: Stage, economy: EconomyConfig): Int {
+    val next = nextStage(stage) ?: return 100
+    val from = threshold(stage, economy)
+    val to = threshold(next, economy)
+    return ((totalGp - from) * 100 / (to - from)).coerceIn(0, 100)
+}
+
+// У Малыша порога нет — с нуля
+private fun threshold(stage: Stage, economy: EconomyConfig): Int = economy.stageThresholds[stage] ?: 0
 
 /** Итог последнего действия на экране: панель «что изменилось» или причина отказа. Показали — сбросили. */
 data class ActionMessage(val feedback: FeedbackUi? = null, val rejection: Rejection? = null)

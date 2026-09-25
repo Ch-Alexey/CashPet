@@ -77,6 +77,7 @@ class WeekSummaryViewModelTest {
             summary.icons,
         )
         assertEquals(content.economy.stageThresholds.getValue(Stage.TEEN) - 100, summary.gpToNextStage)
+        assertEquals(100 * 100 / content.economy.stageThresholds.getValue(Stage.TEEN), summary.stageProgressPct)
         assertNull(summary.stageUp)
         assertNull(summary.recoveryHint)
     }
