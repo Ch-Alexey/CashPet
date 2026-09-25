@@ -42,18 +42,22 @@ class PlanViewModel(
         viewModelScope.launch { store.dispatch(Action.ConfirmPlan) }
     }
 
-    // Больше доступного и меньше нуля движок не даст — отказ просто ничего не меняет
+    // Новый план — от состояния под замком GameStore, а не от uiState: иначе быстрое второе нажатие потеряется.
+    // Больше доступного движок не даст — отказ просто ничего не меняет
     private fun change(part: Part, delta: Int) {
-        val state = store.state.value ?: return
-        if (state.week.planConfirmed) return
-        val plan = state.week.plan ?: Plan()
-        val next = when (part) {
-            Part.NEED -> plan.copy(need = plan.need + delta)
-            Part.WANT -> plan.copy(want = plan.want + delta)
-            Part.SAVE -> plan.copy(save = plan.save + delta)
+        if (store.state.value == null) return
+        viewModelScope.launch {
+            store.dispatch { state ->
+                val plan = state.week.plan ?: Plan()
+                val next = when (part) {
+                    Part.NEED -> plan.copy(need = plan.need + delta)
+                    Part.WANT -> plan.copy(want = plan.want + delta)
+                    Part.SAVE -> plan.copy(save = plan.save + delta)
+                }
+                val valid = !state.week.planConfirmed && next.need >= 0 && next.want >= 0 && next.save >= 0
+                if (valid) Action.SetPlan(next) else null
+            }
         }
-        if (next.need < 0 || next.want < 0 || next.save < 0) return
-        viewModelScope.launch { store.dispatch(Action.SetPlan(next)) }
     }
 
     private fun toUi(state: GameState): PlanUiState {
