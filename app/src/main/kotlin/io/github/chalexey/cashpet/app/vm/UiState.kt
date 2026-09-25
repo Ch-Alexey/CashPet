@@ -1,6 +1,7 @@
 package io.github.chalexey.cashpet.app.vm
 
 import io.github.chalexey.cashpet.content.ScreenKind
+import io.github.chalexey.cashpet.core.engine.Rejection
 import io.github.chalexey.cashpet.core.model.Difficulty
 import io.github.chalexey.cashpet.core.model.EffectKey
 import io.github.chalexey.cashpet.core.model.GrowthIcon
@@ -115,6 +116,17 @@ data class SavingsUiState(
     val weeksLeft: Int?,                     // «примерно N недель», null — не показывать
     val canBuyGoal: Boolean,
     val wallet: Int,
+    val feedback: FeedbackUi? = null,        // панель «что изменилось» после пополнения, снятия, мечты
+    val rejection: Rejection? = null,        // почему не получилось: нет плана, не хватает, «уже есть»
+)
+
+/** Предпросмотр снятия «было → станет» — до подтверждения (п. 2.5.7 ТЗ). */
+data class WithdrawPreviewUi(
+    val amount: Int,
+    val savedBefore: Int,
+    val savedAfter: Int,
+    val weeksBefore: Int?,                   // null — срок не показываем
+    val weeksAfter: Int?,
 )
 
 data class GoalUi(

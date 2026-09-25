@@ -2,7 +2,9 @@ package io.github.chalexey.cashpet.app.vm
 
 import io.github.chalexey.cashpet.content.GameContent
 import io.github.chalexey.cashpet.core.engine.GameEngine
+import io.github.chalexey.cashpet.core.engine.Result
 import io.github.chalexey.cashpet.core.model.GameState
+import io.github.chalexey.cashpet.core.model.GoalDef
 
 // Общие преобразования GameState → UiState: верхняя панель, карточки заданий, подстановки.
 // Нужны почти всем ViewModel, поэтому здесь, а не в каждой
@@ -28,3 +30,32 @@ fun openTasks(state: GameState, content: GameContent, engine: GameEngine): List<
 /** Имена игрока и кота в тексте из контента; остальные подстановки — там, где они известны. */
 fun String.withNames(state: GameState): String =
     replace("{petName}", state.pet.name).replace("{playerName}", state.profile.playerName)
+
+/**
+ * Панель «что изменилось» после действия (п. 2.5.9 ТЗ): было → стало и фраза из texts.json.
+ * [amount] и [item] — для подстановок {amount} и {item}: сумма взноса, название товара или цели.
+ */
+fun feedbackUi(ok: Result.Ok, content: GameContent, amount: Int? = null, item: String? = null): FeedbackUi {
+    val f = ok.feedback
+    val text = content.texts.feedback.getValue(f.reason)
+        .replace("{amount}", amount?.toString() ?: "")
+        .replace("{item}", item ?: "")
+        .withNames(ok.state)
+    return FeedbackUi(f.balanceBefore, f.balanceAfter, f.savingsBefore, f.savingsAfter, f.statChanges, text)
+}
+
+/** Карточка цели: «накоплено N из стоимости», полоска из клеточек по 10. Копилка общая — N у всех целей одно. */
+fun goalUi(goal: GoalDef, state: GameState): GoalUi {
+    val saved = minOf(state.savings.total, goal.cost)
+    return GoalUi(
+        id = goal.id,
+        name = goal.name,
+        cost = goal.cost,
+        saved = saved,
+        cells = goal.cost / CELL,
+        filledCells = saved / CELL,
+        bought = goal.id in state.savings.boughtGoalIds,
+    )
+}
+
+private const val CELL = 10              // docs/01-функционал.md, «Копилка»: вид полоски, не экономика — не в конфиге
