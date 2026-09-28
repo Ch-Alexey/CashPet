@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+ <path android:fillColor="#DCE5F7" android:pathData="M 26,114 A 38,8 0 0,1 102,114 A 38,8 0 0,1 26,114 Z"/>
+ <!-- Корпус пакета -->
+ <path android:fillColor="#FFA756" android:pathData="M 32,36 L 40,18 L 88,18 L 96,36 L 92,106 C 92,110 86,112 64,112 C 42,112 36,110 36,106 Z"/>
+ <path android:fillColor="#FF8A50" android:pathData="M 38,28 L 88,28 L 86,36 L 40,36 Z"/>
+ <!-- Белая плашка -->
+ <path android:fillColor="#FFFFFF" android:pathData="M 56,48 L 72,48 A 14,14 0 0,1 86,62 L 86,82 A 14,14 0 0,1 72,96 L 56,96 A 14,14 0 0,1 42,82 L 42,62 A 14,14 0 0,1 56,48 Z"/>
+ <!-- Рыбка -->
+ <path android:fillColor="#5C8EED" android:pathData="M 50,72 C 58,62 70,62 78,72 C 70,82 58,82 50,72 Z"/>
+ <path android:fillColor="#5C8EED" android:pathData="M 76,72 L 84,65 L 84,79 Z"/>
+ <path android:fillColor="#FFFFFF" android:pathData="M 54.5,70 A 1.5,1.5 0 0,1 57.5,70 A 1.5,1.5 0 0,1 54.5,70 Z"/>
+ <!-- Гранулы корма -->
+ <path android:fillColor="#D35400" android:pathData="M 24,70 A 4,4 0 0,1 32,70 A 4,4 0 0,1 24,70 Z"/>
+ <path android:fillColor="#E67E22" android:pathData="M 17,84 A 5,5 0 0,1 27,84 A 5,5 0 0,1 17,84 Z"/>
+</vector>

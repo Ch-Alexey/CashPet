@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 28,102 A 36,8 0 0,1 100,102 A 36,8 0 0,1 28,102 Z"/>
+    <!-- Тело мышки -->
+    <path android:fillColor="#94A3B8" android:pathData="M 28,72 C 28,48 70,48 98,72 C 98,84 80,88 56,88 C 36,88 28,82 28,72 Z"/>
+    <!-- Хвостик -->
+    <path android:strokeColor="#FF9EA9" android:strokeWidth="4" android:strokeLineCap="round" android:pathData="M 28,76 Q 12,78 14,92"/>
+    <!-- Ушко -->
+    <path android:fillColor="#94A3B8" android:pathData="M 59,54 A 13,13 0 0,1 85,54 A 13,13 0 0,1 59,54 Z"/>
+    <path android:fillColor="#FF9EA9" android:pathData="M 64,54 A 8,8 0 0,1 80,54 A 8,8 0 0,1 64,54 Z"/>
+    <!-- Глазик и носик -->
+    <path android:fillColor="#1E293B" android:pathData="M 85.5,66 A 2.5,2.5 0 0,1 90.5,66 A 2.5,2.5 0 0,1 85.5,66 Z"/>
+    <path android:fillColor="#FF8EA3" android:pathData="M 94.5,72 A 3.5,3.5 0 0,1 101.5,72 A 3.5,3.5 0 0,1 94.5,72 Z"/>
+</vector>
