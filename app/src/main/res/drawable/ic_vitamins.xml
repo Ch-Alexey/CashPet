@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="128dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <!-- Shadow -->
+    <path
+        android:fillColor="#DCE5F7"
+        android:pathData="M30,104
+            C30,99.6 45.2,96 64,96
+            C82.8,96 98,99.6 98,104
+            C98,108.4 82.8,112 64,112
+            C45.2,112 30,108.4 30,104Z" />
+
+    <!-- Bottle -->
+    <path
+        android:fillColor="#FFB3C1"
+        android:pathData="M54,44
+            H74
+            C83.9,44 92,52.1 92,62
+            V88
+            C92,97.9 83.9,106 74,106
+            H54
+            C44.1,106 36,97.9 36,88
+            V62
+            C36,52.1 44.1,44 54,44Z" />
+
+    <!-- Bottle upper part -->
+    <path
+        android:fillColor="#FF9EA9"
+        android:pathData="M36,44
+            H92
+            V74
+            H36Z" />
+
+    <!-- Cap -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,26
+            H78
+            C82.4,26 86,29.6 86,34
+            V46
+            H42
+            V34
+            C42,29.6 45.6,26 50,26Z" />
+
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M42,38
+            H86
+            V46
+            H42Z" />
+
+    <!-- Label -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,58
+            H74
+            C79.5,58 84,62.5 84,68
+            V84
+            C84,89.5 79.5,94 74,94
+            H54
+            C48.5,94 44,89.5 44,84
+            V68
+            C44,62.5 48.5,58 54,58Z" />
+
+    <!-- Paw -->
+    <path
+        android:fillColor="#FF6B8B"
+        android:pathData="M57,78
+            C57,74.7 59.9,72 64,72
+            C68.1,72 71,74.7 71,78
+            C71,81.8 68.3,84 64,84
+            C59.7,84 57,81.8 57,78Z" />
+
+    <path
+        android:fillColor="#FF6B8B"
+        android:pathData="M53,70
+            A3,3 0,1 0,59,70
+            A3,3 0,1 0,53,70Z" />
+
+    <path
+        android:fillColor="#FF6B8B"
+        android:pathData="M69,70
+            A3,3 0,1 0,75,70
+            A3,3 0,1 0,69,70Z" />
+
+    <path
+        android:fillColor="#FF6B8B"
+        android:pathData="M61,67
+            A3,3 0,1 0,67,67
+            A3,3 0,1 0,61,67Z" />
+
+    <!-- Pill -->
+    <group
+        android:pivotX="90"
+        android:pivotY="80"
+        android:rotation="-25">
+
+        <path
+            android:fillColor="#FFEAA7"
+            android:pathData="M82,64
+                A8,8 0,0 1,98,64
+                V96
+                A8,8 0,0 1,82,96Z" />
+
+        <path
+            android:fillColor="#FF7675"
+            android:pathData="M82,80
+                H98
+                V88
+                A8,8 0,0 1,82,88Z" />
+    </group>
+
+    <!-- Small pill -->
+    <path
+        android:fillColor="#74B9FF"
+        android:pathData="M30,88
+            A7,7 0,1 0,30.1,88Z" />
+
+</vector>
