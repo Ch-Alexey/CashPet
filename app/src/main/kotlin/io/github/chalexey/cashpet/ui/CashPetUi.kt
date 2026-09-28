@@ -81,7 +81,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -189,12 +188,32 @@ private object Routes {
     const val DEMO = "demo"
 }
 
-/** Переход между разделами нижнего меню без бесконечного роста стека «назад». */
+/**
+ * Переход между разделами. Home — стабильный корень игровой части стека.
+ * Сначала возвращаемся к уже существующему Home через popBackStack(),
+ * и только потом открываем нужную вкладку. restoreState/saveState здесь
+ * намеренно не используются: после закрытия недели они могли возвращать
+ * старое состояние маршрута и визуально блокировать переход на Дом.
+ */
 private fun NavHostController.goTab(route: String) {
-    navigate(route) {
-        popUpTo(Routes.HOME) { saveState = true }
-        launchSingleTop = true
-        restoreState = true
+    if (currentDestination?.route == route) return
+
+    if (route == Routes.HOME) {
+        if (!popBackStack(Routes.HOME, inclusive = false)) {
+            // Fallback для редкого случая, когда Home отсутствует в стеке.
+            navigate(Routes.HOME) { launchSingleTop = true }
+        }
+        return
+    }
+
+    // Для любой вкладки сначала удаляем промежуточные экраны (Итоги, настройки и т.п.)
+    // и возвращаемся к живому Home. В обычном игровом flow Home всегда существует.
+    popBackStack(Routes.HOME, inclusive = false)
+    if (currentDestination?.route != Routes.HOME) {
+        navigate(Routes.HOME) { launchSingleTop = true }
+    }
+    if (currentDestination?.route != route) {
+        navigate(route) { launchSingleTop = true }
     }
 }
 
@@ -278,7 +297,7 @@ private fun StartRoute(nav: NavHostController) {
     val state by vm.uiState.collectAsStateWithLifecycle()
     StartScreen(
         state = state,
-        onPlay = { if (state.hasProfile) nav.navigate(Routes.HOME) else nav.navigate("${Routes.ONBOARDING}/${if (state.demo) Slot.DEMO.name else Slot.CHILD.name}") },
+        onPlay = { if (state.hasProfile) nav.goTab(Routes.HOME) else nav.navigate("${Routes.ONBOARDING}/${if (state.demo) Slot.DEMO.name else Slot.CHILD.name}") },
         onAdult = { nav.navigate(Routes.ADULT_GATE) },
     )
 }
@@ -288,7 +307,13 @@ private fun OnboardingRoute(nav: NavHostController, slot: Slot) {
     val vm: OnboardingViewModel = viewModel(factory = OnboardingViewModel.factory(slot))
     val state by vm.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(state.finished) {
-        if (state.finished) nav.navigate("${Routes.TASK}/${state.firstTaskId ?: "0"}") { popUpTo(Routes.ONBOARDING + "/{slot}") { inclusive = true } }
+        // Профиль создан: сначала заменяем весь стек на Дом (Старт и Онбординг исчезают из «назад»),
+        // потом поверх — первое задание. «Готово» на задании (popBackStack) вернёт на Дом, а не на Старт —
+        // раньше это было не так, и после первого задания игрока выкидывало на стартовый экран.
+        if (state.finished) {
+            nav.navigate(Routes.HOME) { popUpTo(Routes.START) { inclusive = true } }
+            nav.navigate("${Routes.TASK}/${state.firstTaskId ?: "0"}")
+        }
     }
     OnboardingScreen(state, vm::onNameChange, vm::onLookChange, vm::onDifficultyChoose, vm::next, vm::skip, vm::back)
 }
@@ -297,13 +322,32 @@ private fun OnboardingRoute(nav: NavHostController, slot: Slot) {
 private fun HomeRoute(nav: NavHostController) {
     val vm: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
     val state by vm.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(state?.weekClosed) {
-        if (state?.weekClosed == true) {
-            vm.onWeekSummaryOpened()
-            nav.navigate(Routes.SUMMARY)
+
+    // Закрытие недели — одноразовое событие. Home остаётся в стеке,
+    // поэтому после итогов можно безопасно вернуться на него.
+    LaunchedEffect(vm) {
+        vm.events.collect { event ->
+            when (event) {
+                HomeViewModel.HomeEvent.WeekClosed -> {
+                    nav.navigate(Routes.SUMMARY) { launchSingleTop = true }
+                }
+            }
         }
     }
-    state?.let { HomeScreen(it, nav, vm::closeWeek) } ?: Unit
+
+    // null означает только загрузку GameStore. Не отправляем пользователя на Start:
+    // после сохранения новой недели Store может на очень короткое время ещё не успеть
+    // отдать обновлённое состояние UI.
+    state?.let { HomeScreen(it, nav, vm::closeWeek) } ?: LoadingScreen()
+}
+
+@Composable
+private fun LoadingScreen() {
+    Surface(Modifier.fillMaxSize(), color = Canvas) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            PetArt(DefaultLook, Stage.BABY, Modifier.size(96.dp))
+        }
+    }
 }
 
 @Composable
@@ -379,7 +423,9 @@ private fun AdultGateRoute(nav: NavHostController) {
     val vm: AdultGateViewModel = viewModel()
     val state by vm.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(state.passed) { if (state.passed) nav.navigate(Routes.ADULT) { popUpTo(Routes.ADULT_GATE) { inclusive = true } } }
-    AdultGateScreen(state.input, if (state.wrongAttempt) "Неверно. Попробуй новый пример." else null, vm::onInputChange, vm::submit, back = { nav.popBackStack() })
+    // Раньше сюда не передавались state.a и state.b — сам пример нигде не рисовался, и барьер
+    // выглядел как пустая форма без вопроса. Теперь пример «a × b» показан явно.
+    AdultGateScreen(state.a, state.b, state.input, if (state.wrongAttempt) "Неверно. Попробуй новый пример." else null, vm::onInputChange, vm::submit, back = { nav.popBackStack() })
 }
 
 @Composable
@@ -855,7 +901,7 @@ private fun ItemCard(
             Text(item.name, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 6.dp))
             CoinAmount(item.price, Modifier.padding(top = 2.dp))
             if (item.effects.isNotEmpty()) {
-                Text(effectText(item.effects), color = Muted, fontSize = 12.sp, lineHeight = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 2.dp))
+                StatEffectRow(item.effects, Modifier.padding(top = 4.dp))
             }
             if (planLeft != null) Text("По плану: $planLeft", color = Muted, fontSize = 12.sp, modifier = Modifier.padding(top = 2.dp))
             Spacer(Modifier.height(8.dp))
@@ -1069,7 +1115,8 @@ private fun SummaryScreen(state: WeekSummaryUiState, nav: NavHostController, loo
                 }
             }
             state.recoveryHint?.let { Callout(it, Peach) }
-            PrimaryButton("Следующая неделя", { nav.navigate(Routes.PLAN) { popUpTo(Routes.SUMMARY) { inclusive = true } } })
+            PrimaryButton("Следующая неделя", { nav.goTab(Routes.PLAN) })
+            SecondaryButton("На главную", { nav.goTab(Routes.HOME) }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
         }
     }
@@ -1124,18 +1171,45 @@ private fun ProgressScreen(state: ProgressUiState, nav: NavHostController, look:
 
 @Composable
 private fun SettingsScreen(state: SettingsUiState, nav: NavHostController, sound: (Boolean) -> Unit, animations: (Boolean) -> Unit) {
+    var about by remember { mutableStateOf(false) }
     AppScaffold(nav, Routes.SETTINGS, "Настройки", null) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             ToggleRow("Звуки", "Музыка и звуковые подсказки", state.sound, sound)
             ToggleRow("Анимации", "Движения кота и переходы", state.animations, animations)
             Spacer(Modifier.height(6.dp))
-            SoftCard(Modifier.fillMaxWidth(), onClick = { nav.navigate(Routes.ADULT_GATE) }) {
-                Row(Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    IconTile(R.drawable.ic_tasks, BluePanel, 40.dp)
-                    Text("Для взрослых", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 12.dp).weight(1f))
-                    Text("›", fontSize = 26.sp, color = Muted)
-                }
+            SectionTitle("Раздел")
+            // Прогресс (статистика) раньше жил в скрытом меню «Ещё» — теперь он здесь, рядом с остальными настройками.
+            SettingsRow(R.drawable.ic_chart, "Прогресс", "Стадия, задания, история недель") { nav.goTab(Routes.PROGRESS) }
+            SettingsRow(R.drawable.ic_tasks, "Для взрослых", "Полный прогресс и управление профилем") { nav.navigate(Routes.ADULT_GATE) }
+            SettingsRow(R.drawable.ic_goal, "О приложении", "Версия, авторы и правила игры") { about = true }
+        }
+    }
+    if (about) {
+        AppDialog(
+            title = "О приложении",
+            onDismiss = { about = false },
+            confirm = { PrimaryButton("Понятно", { about = false }, compact = true) },
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("CashPet — версия 1.0.0", fontWeight = FontWeight.Bold)
+                Text("Игра о деньгах и заботе о питомце: ставь цели, выполняй задания, планируй бюджет и корми своего кота.")
+                Text("Приложение полностью офлайн: все данные хранятся только на этом устройстве и никуда не отправляются.", color = InkSoft)
+                Text("© CashPet", color = Muted, fontSize = 12.sp)
             }
+        }
+    }
+}
+
+@Composable
+private fun SettingsRow(icon: Int, title: String, subtitle: String, onClick: () -> Unit) {
+    SoftCard(Modifier.fillMaxWidth(), onClick = onClick) {
+        Row(Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            IconTile(icon, BluePanel, 40.dp)
+            Column(Modifier.padding(start = 12.dp).weight(1f)) {
+                Text(title, fontWeight = FontWeight.Bold)
+                Text(subtitle, color = Muted, fontSize = 12.5.sp, lineHeight = 16.sp)
+            }
+            Text("›", fontSize = 26.sp, color = Muted)
         }
     }
 }
@@ -1145,18 +1219,26 @@ private fun SettingsScreen(state: SettingsUiState, nav: NavHostController, sound
 // ---------------------------------------------------------------------------------------------
 
 @Composable
-private fun AdultGateScreen(input: String, error: String?, change: (String) -> Unit, submit: () -> Unit, back: () -> Unit) {
+private fun AdultGateScreen(a: Int, b: Int, input: String, error: String?, change: (String) -> Unit, submit: () -> Unit, back: () -> Unit) {
     Surface(Modifier.fillMaxSize(), color = Canvas) {
         Column(Modifier.fillMaxSize().systemBarsPadding().padding(22.dp), verticalArrangement = Arrangement.Center) {
             Row(verticalAlignment = Alignment.CenterVertically) { BackButton(back); Text("Назад", color = Ink) }
             Spacer(Modifier.height(8.dp))
             Text("Раздел для взрослых", style = MaterialTheme.typography.headlineLarge)
             Text("Реши короткий пример, чтобы открыть настройки прогресса.", color = InkSoft, modifier = Modifier.padding(vertical = 8.dp))
-            Callout("Подсказка: ответ должен быть числом.", BluePanel)
-            Spacer(Modifier.height(10.dp))
+            // Сам пример — самое важное на этом экране, раньше он никак не выводился
+            SoftCard(Modifier.fillMaxWidth(), color = BluePanel, radius = 24.dp) {
+                Text(
+                    "$a × $b = ?",
+                    style = MaterialTheme.typography.headlineLarge.copy(fontSize = 40.sp),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 22.dp),
+                )
+            }
+            Spacer(Modifier.height(14.dp))
             OutlinedTextField(
                 value = input, onValueChange = change, isError = error != null, label = { Text("Ответ") },
-                supportingText = { Text(error ?: "") }, singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp),
+                supportingText = { Text(error ?: "Только цифры") }, singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp),
             )
             PrimaryButton("Открыть", submit, modifier = Modifier.padding(top = 8.dp))
         }
@@ -1280,11 +1362,12 @@ private fun DemoScreen(state: DemoUiState, start: () -> Unit, speed: () -> Unit,
 }
 
 // ---------------------------------------------------------------------------------------------
-// Каркас: шапка, нижнее меню, «Ещё»
+// Каркас: шапка и нижнее меню.
+// «Ещё» убрали — пять разделов помещаются в один ряд: Дом · План · Задания · Магазин · Копилка.
+// Прогресс (статистика) и «Для взрослых» переехали в Настройки — их не нужно было прятать за лишним тапом.
 // ---------------------------------------------------------------------------------------------
 
-private val TabRoutes = setOf(Routes.HOME, Routes.PLAN, Routes.TASKS, Routes.SHOP)
-private val MoreRoutes = setOf(Routes.SAVINGS, Routes.PROGRESS, Routes.SETTINGS, Routes.ADULT)
+private val TabRoutes = setOf(Routes.HOME, Routes.PLAN, Routes.TASKS, Routes.SHOP, Routes.SAVINGS)
 
 @Composable
 private fun AppScaffold(nav: NavHostController, current: String, title: String, top: TopBarUi?, content: @Composable () -> Unit) {
@@ -1314,31 +1397,17 @@ private fun ScreenHeader(title: String, top: TopBarUi?, nav: NavHostController, 
 
 @Composable
 private fun BottomBar(current: String, nav: NavHostController) {
-    var more by remember { mutableStateOf(false) }
     val items = listOf(
         Triple(Routes.HOME, "Дом", R.drawable.ic_home),
         Triple(Routes.PLAN, "План", R.drawable.ic_plan),
         Triple(Routes.TASKS, "Задания", R.drawable.ic_tasks),
         Triple(Routes.SHOP, "Магазин", R.drawable.ic_shop),
+        Triple(Routes.SAVINGS, "Копилка", R.drawable.ic_savings),
     )
     Surface(color = White, shadowElevation = 10.dp, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp), border = BorderStroke(1.dp, Border)) {
-        Row(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 4.dp, vertical = 6.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
             items.forEach { (route, label, icon) ->
                 NavItem(label, icon, current == route, Modifier.weight(1f)) { if (current != route) nav.goTab(route) }
-            }
-            NavItem("Ещё", R.drawable.ic_more, current in MoreRoutes, Modifier.weight(1f)) { more = true }
-        }
-    }
-    if (more) {
-        Dialog(onDismissRequest = { more = false }) {
-            Surface(shape = RoundedCornerShape(28.dp), color = Surf) {
-                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Ещё", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 6.dp))
-                    MoreRow(R.drawable.ic_savings, "Копилка") { more = false; if (current != Routes.SAVINGS) nav.goTab(Routes.SAVINGS) }
-                    MoreRow(R.drawable.ic_chart, "Прогресс") { more = false; if (current != Routes.PROGRESS) nav.goTab(Routes.PROGRESS) }
-                    MoreRow(R.drawable.ic_settings, "Настройки") { more = false; if (current != Routes.SETTINGS) nav.goTab(Routes.SETTINGS) }
-                    MoreRow(R.drawable.ic_tasks, "Для взрослых") { more = false; nav.navigate(Routes.ADULT_GATE) }
-                }
             }
         }
     }
@@ -1355,15 +1424,6 @@ private fun NavItem(label: String, icon: Int, selected: Boolean, modifier: Modif
             Icon(painterResource(icon), label, tint = Color.Unspecified, modifier = Modifier.size(21.dp))
         }
         Text(label, fontSize = 11.sp, maxLines = 1, color = if (selected) BlueDark else Muted, fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium)
-    }
-}
-
-@Composable
-private fun MoreRow(icon: Int, label: String, onClick: () -> Unit) {
-    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).clip(RoundedCornerShape(18.dp)).clickable(onClick = onClick).padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-        IconTile(icon, BluePanel, 40.dp)
-        Text(label, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 12.dp).weight(1f))
-        Text("›", fontSize = 24.sp, color = Muted)
     }
 }
 
@@ -1590,7 +1650,7 @@ private fun IconTile(icon: Int, bg: Color, size: Dp) {
 @Composable
 private fun CoinAmount(value: Int, modifier: Modifier = Modifier, big: Boolean = false) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        Icon(painterResource(R.drawable.ic_coin), "Монеты", tint = Color.Unspecified, modifier = Modifier.size(if (big) 26.dp else 17.dp))
+        Icon(painterResource(R.drawable.ic_coin), "Монеты", tint = Color(0xFFFFB72B), modifier = Modifier.size(if (big) 26.dp else 17.dp))
         Text(" $value", fontWeight = FontWeight.ExtraBold, color = if (big) Ink else Gold, fontSize = if (big) 28.sp else 15.sp)
     }
 }
@@ -1809,6 +1869,19 @@ private fun TaskCard(task: TaskCardUi, done: Boolean = false, onClick: () -> Uni
     }
 }
 
+/** Эффекты товара (сытость/уход/настроение) — маленькая иконка вместо слова, чтобы карточка читалась с одного взгляда. */
+@Composable
+private fun StatEffectRow(effects: Map<Stat, Int>, modifier: Modifier = Modifier) {
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        effects.forEach { (stat, value) ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(painterResource(statIcon(stat)), statLabel(stat), tint = Color.Unspecified, modifier = Modifier.size(15.dp))
+                Text(" ${if (value > 0) "+" else ""}$value", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (value >= 0) Green else Pink)
+            }
+        }
+    }
+}
+
 @Composable
 private fun EffectChips(effects: Map<EffectKey, Int>) {
     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1909,7 +1982,7 @@ private fun effectLabel(key: EffectKey) = when (key) {
     EffectKey.CARE -> "🧼"
     EffectKey.MOOD -> "😊"
 }
-private fun effectText(effects: Map<Stat, Int>) = effects.entries.joinToString(" · ") { "${statLabel(it.key)} ${if (it.value > 0) "+" else ""}${it.value}" }
+private fun statIcon(stat: Stat) = when (stat) { Stat.SATIETY -> R.drawable.ic_food; Stat.CARE -> R.drawable.ic_comb; Stat.MOOD -> R.drawable.ic_mood }
 private fun rejectionText(r: Rejection) = when (r) {
     is Rejection.NotEnoughMoney -> "Не хватает ${r.missing} монет. Можно выполнить задание или подработку, выбрать что-то дешевле, добавить покупку в «Хочу потом» или взять из копилки."
     is Rejection.PlanExceedsBudget -> "План превышает доступный бюджет на ${r.excess} монет."

@@ -12,10 +12,12 @@ import io.github.chalexey.cashpet.core.engine.Action
 import io.github.chalexey.cashpet.core.engine.GameEngine
 import io.github.chalexey.cashpet.core.engine.Result
 import io.github.chalexey.cashpet.core.model.GameState
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -29,25 +31,34 @@ class HomeViewModel(
     private val store: GameStore,
 ) : ViewModel() {
 
-    private val weekClosed = MutableStateFlow(false)
+    private val _events = MutableSharedFlow<HomeEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<HomeEvent> = _events.asSharedFlow()
+    private var closingWeek = false
 
-    val uiState: StateFlow<HomeUiState?> = combine(store.state, weekClosed) { state, closed ->
-        state?.let { toUi(it, closed) }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, store.state.value?.let { toUi(it, false) })
+    val uiState: StateFlow<HomeUiState?> = store.state
+        .map { state -> state?.let(::toUi) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, store.state.value?.let(::toUi))
 
-    /** «Завершить неделю» — после ответа на closeWarning, если он был. Потом экран открывает «Итог недели». */
+    /** «Завершить неделю»: сначала сохраняем новую неделю, затем отправляем одно событие навигации. */
     fun closeWeek() {
+        if (closingWeek) return
+        closingWeek = true
         viewModelScope.launch {
-            if (store.dispatch(Action.CloseWeek) is Result.Ok) weekClosed.value = true
+            try {
+                if (store.dispatch(Action.CloseWeek) is Result.Ok) {
+                    _events.emit(HomeEvent.WeekClosed)
+                }
+            } finally {
+                closingWeek = false
+            }
         }
     }
 
-    /** «Итог недели» открыт — событие обработано, повторно не открывать. */
-    fun onWeekSummaryOpened() {
-        weekClosed.value = false
+    sealed interface HomeEvent {
+        data object WeekClosed : HomeEvent
     }
 
-    private fun toUi(state: GameState, closed: Boolean): HomeUiState {
+    private fun toUi(state: GameState): HomeUiState {
         val stats = state.pet.stats
         val week = state.week
         val needNotBought = week.foodPoints < content.economy.needFoodPoints ||
@@ -68,7 +79,6 @@ class HomeViewModel(
                 needNotBought -> CloseWeekWarning.NEED_NOT_BOUGHT
                 else -> null
             },
-            weekClosed = closed,
         )
     }
 
