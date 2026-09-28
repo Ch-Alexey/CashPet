@@ -1,0 +1,74 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Фон иконки (голубой со скруглениями) -->
+    <path
+        android:fillColor="#80C4FF"
+        android:pathData="M 20,5 C 5,5 5,20 5,50 C 5,80 5,95 20,95 L 80,95 C 95,95 95,80 95,50 C 95,20 95,5 80,5 Z" />
+
+    <!-- Группа с мордочкой, наклоненная вправо -->
+    <group
+        android:pivotX="50"
+        android:pivotY="50"
+        android:rotation="15">
+
+        <!-- Левое ухо (серое) -->
+        <path
+            android:fillColor="#6A7382"
+            android:pathData="M 30,45 L 15,15 C 13,10 25,18 38,25 Z" />
+        <path
+            android:fillColor="#FFC4C4"
+            android:pathData="M 28,40 L 20,22 C 18,18 25,24 33,28 Z" />
+
+        <!-- Правое ухо (серое) -->
+        <path
+            android:fillColor="#6A7382"
+            android:pathData="M 70,45 L 85,15 C 87,10 75,18 62,25 Z" />
+        <path
+            android:fillColor="#FFC4C4"
+            android:pathData="M 72,40 L 80,22 C 82,18 75,24 67,28 Z" />
+
+        <!-- Основная голова (серая) -->
+        <path
+            android:fillColor="#6A7382"
+            android:pathData="M 50,22 C 20,22 15,45 15,60 C 15,75 25,85 50,85 C 75,85 85,75 85,60 C 85,45 80,22 50,22 Z" />
+
+        <!-- Белая нижняя часть мордочки (Bi-color) -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M 50,45 C 35,45 22,50 18,62 C 25,80 35,85 50,85 C 65,85 75,80 82,62 C 78,50 65,45 50,45 Z" />
+
+        <!-- Огромные черные глаза (как в макете) -->
+        <path
+            android:fillColor="#2C2E3E"
+            android:pathData="M 32,55 C 26,55 24,62 24,68 C 24,74 26,78 32,78 C 38,78 40,74 40,68 C 40,62 38,55 32,55 Z" />
+        <!-- Блик левого глаза -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M 34,58 A 3,3 0 1,0 34,64 A 3,3 0 1,0 34,58 Z" />
+
+        <path
+            android:fillColor="#2C2E3E"
+            android:pathData="M 68,55 C 62,55 60,62 60,68 C 60,74 62,78 68,78 C 74,78 76,74 76,68 C 76,62 74,55 68,55 Z" />
+        <!-- Блик правого глаза -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M 70,58 A 3,3 0 1,0 70,64 A 3,3 0 1,0 70,58 Z" />
+
+        <!-- Крошечный носик -->
+        <path
+            android:fillColor="#FF9E9E"
+            android:pathData="M 50,68 L 47,65 L 53,65 Z" />
+
+        <!-- Розовые румяные щечки -->
+        <path
+            android:fillColor="#FFC4C4"
+            android:pathData="M 22,72 A 4,3 0 1,0 22,78 A 4,3 0 1,0 22,72 Z" />
+        <path
+            android:fillColor="#FFC4C4"
+            android:pathData="M 78,72 A 4,3 0 1,0 78,78 A 4,3 0 1,0 78,72 Z" />
+    </group>
+</vector>

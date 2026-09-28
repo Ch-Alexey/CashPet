@@ -77,6 +77,7 @@ class AdultViewModel(
             weeksPlayed = state.history.size,
             tasksDone = state.tasks.size,
             tasksTotal = content.tasks.size,
+            openTasks = content.tasks.filter { it.id !in state.tasks }.map { TaskCardUi(it.id, it.title, it.topic, it.reward.coins) },
             tasksByTopic = tasksByTopic(state, content),
             goalsBought = state.savings.boughtGoalIds.size,
             navigate = nav,

@@ -1,0 +1,66 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+ <!-- Тень под свинкой -->
+ <path
+     android:fillColor="#20000000"
+     android:pathData="M 22,86 C 40,86 60,86 78,86 C 88,86 88,78 78,78 C 60,78 40,78 22,78 C 12,78 12,86 22,86 Z" />
+
+ <!-- Ножки -->
+ <path
+     android:fillColor="#FF8FA3"
+     android:pathData="M 30,70 L 30,82 C 30,84 36,84 36,82 L 36,70 Z M 64,70 L 64,82 C 64,84 70,84 70,82 L 70,70 Z" />
+
+ <!-- Тело свинки -->
+ <path
+     android:fillColor="#FFB7B2"
+     android:pathData="M 50,32 C 28,32 18,44 18,60 C 18,74 30,80 50,80 C 70,80 82,74 82,60 C 82,44 72,32 50,32 Z" />
+
+ <!-- Хвостик-крючок -->
+ <path
+     android:strokeColor="#FF8FA3"
+     android:strokeWidth="4"
+     android:strokeLineCap="round"
+     android:pathData="M 81,58 C 88,58 90,52 87,48 C 84,44 88,40 92,42" />
+
+ <!-- Ушки -->
+ <path
+     android:fillColor="#FF8FA3"
+     android:pathData="M 28,36 C 24,24 34,22 38,32 Z" />
+ <path
+     android:fillColor="#FF8FA3"
+     android:pathData="M 72,36 C 76,24 66,22 62,32 Z" />
+
+ <!-- Прорезь для монеты -->
+ <path
+     android:fillColor="#4A4A4A"
+     android:pathData="M 42,32 L 58,32 C 60,32 60,35 58,35 L 42,35 C 40,35 40,32 42,32 Z" />
+
+ <!-- Золотая монетка, падающая в копилку -->
+ <path
+     android:fillColor="#FFD166"
+     android:pathData="M 50,10 C 43,10 38,15 38,22 C 38,29 43,34 50,34 C 57,34 62,29 62,22 C 62,15 57,10 50,10 Z" />
+ <path
+     android:fillColor="#FFB703"
+     android:pathData="M 50,14 C 45,14 42,17 42,22 C 42,27 45,30 50,30 C 55,30 58,27 58,22 C 58,17 55,14 50,14 Z" />
+
+ <!-- Пятачок -->
+ <path
+     android:fillColor="#FF8FA3"
+     android:pathData="M 50,52 C 42,52 38,57 38,62 C 38,67 42,70 50,70 C 58,70 62,67 62,62 C 62,57 58,52 50,52 Z" />
+ <!-- Ноздри -->
+ <path
+     android:fillColor="#E65C7B"
+     android:pathData="M 45,60 C 43,60 43,64 45,64 C 47,64 47,60 45,60 Z M 55,60 C 53,60 53,64 55,64 C 57,64 57,60 55,60 Z" />
+
+ <!-- Глазки и румянец -->
+ <path
+     android:fillColor="#2B2D42"
+     android:pathData="M 34,48 A 3,3 0 1,0 34,54 A 3,3 0 1,0 34,48 Z M 66,48 A 3,3 0 1,0 66,54 A 3,3 0 1,0 66,48 Z" />
+ <path
+     android:fillColor="#FF8FA3"
+     android:pathData="M 26,58 A 4,3 0 1,0 26,64 A 4,3 0 1,0 26,58 Z M 74,58 A 4,3 0 1,0 74,64 A 4,3 0 1,0 74,58 Z" />
+</vector>

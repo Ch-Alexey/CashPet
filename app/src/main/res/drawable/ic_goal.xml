@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+ <path android:fillColor="#DCE5F7" android:pathData="M 24,112 A 40,8 0 0,1 104,112 A 40,8 0 0,1 24,112 Z"/>
+ <!-- Деревянная подставка -->
+ <path android:fillColor="#FFA756" android:pathData="M 30,98 L 94,98 A 6,6 0 0,1 100,104 L 100,106 A 6,6 0 0,1 94,112 L 30,112 A 6,6 0 0,1 24,106 L 24,104 A 6,6 0 0,1 30,98 Z"/>
+ <!-- Столбик -->
+ <path android:fillColor="#FFE082" android:pathData="M 54,36 L 74,36 L 74,100 L 54,100 Z"/>
+ <!-- Намотка веревки -->
+ <path android:strokeColor="#FFB300" android:strokeWidth="3" android:pathData="M 54,46 L 74,46"/>
+ <path android:strokeColor="#FFB300" android:strokeWidth="3" android:pathData="M 54,56 L 74,56"/>
+ <path android:strokeColor="#FFB300" android:strokeWidth="3" android:pathData="M 54,66 L 74,66"/>
+ <path android:strokeColor="#FFB300" android:strokeWidth="3" android:pathData="M 54,76 L 74,76"/>
+ <path android:strokeColor="#FFB300" android:strokeWidth="3" android:pathData="M 54,86 L 74,86"/>
+ <!-- Полочка сверху -->
+ <path android:fillColor="#FF8EA3" android:pathData="M 41,24 L 87,24 A 5,5 0 0,1 92,29 L 92,33 A 5,5 0 0,1 87,38 L 41,38 A 5,5 0 0,1 36,33 L 36,29 A 5,5 0 0,1 41,24 Z"/>
+ <!-- Шарик -->
+ <path android:strokeColor="#3D4B66" android:strokeWidth="2" android:pathData="M 42,38 L 42,54"/>
+ <path android:fillColor="#5C8EED" android:pathData="M 37,58 A 5,5 0 0,1 47,58 A 5,5 0 0,1 37,58 Z"/>
+</vector>

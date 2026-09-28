@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 22,110 A 42,8 0 0,1 106,110 A 42,8 0 0,1 22,110 Z"/>
+    <!-- Корпус дома -->
+    <path android:fillColor="#FFF3E0" android:pathData="M 38,52 L 90,52 A 10,10 0 0,1 100,62 L 100,96 A 10,10 0 0,1 90,106 L 38,106 A 10,10 0 0,1 28,96 L 28,62 A 10,10 0 0,1 38,52 Z"/>
+    <!-- Крыша -->
+    <path android:fillColor="#FFA756" android:pathData="M 64,18 L 20,54 L 108,54 Z"/>
+    <path android:fillColor="#FF8A50" android:pathData="M 64,24 L 26,54 L 102,54 Z"/>
+    <!-- Вход в виде котика -->
+    <path android:fillColor="#3D4B66" android:pathData="M 48,106 L 48,78 C 48,70 80,70 80,78 L 80,106 Z"/>
+    <path android:fillColor="#FFF3E0" android:pathData="M 52,74 L 58,64 L 64,72 L 70,64 L 76,74 Z"/>
+</vector>

@@ -45,8 +45,8 @@ class OnboardingViewModel(
 
     fun onNameChange(text: String) {
         when (screens[index].kind) {
-            ScreenKind.PLAYER_NAME -> playerName = text
-            ScreenKind.PET_NAME -> petName = text
+            ScreenKind.PLAYER_NAME -> playerName = capitalizeName(text)
+            ScreenKind.PET_NAME -> petName = capitalizeName(text)
             else -> return
         }
         showError = false
@@ -145,6 +145,10 @@ class OnboardingViewModel(
             finished = finished,
             firstTaskId = if (finished) screens.last().next else null,
         )
+    }
+
+    private fun capitalizeName(value: String): String = value.trimStart().replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase() else it.toString()
     }
 
     private fun currentName(): String = when (screens[index].kind) {

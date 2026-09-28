@@ -309,6 +309,7 @@ data class AdultUiState(
     val weeksPlayed: Int = 0,
     val tasksDone: Int = 0,
     val tasksTotal: Int = 0,
+    val openTasks: List<TaskCardUi> = emptyList(),
     val tasksByTopic: Map<Topic, TopicProgressUi> = emptyMap(),   // пройденные темы: «Сбережения — 1 из 2»
     val goalsBought: Int = 0,
     val navigate: AdultNav? = null,          // куда перейти после сброса или удаления; перешли — onNavigated()

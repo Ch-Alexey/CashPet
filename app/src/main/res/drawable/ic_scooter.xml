@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 22,112 A 42,6 0 0,1 106,112 A 42,6 0 0,1 22,112 Z"/>
+    <!-- Колеса -->
+    <path android:fillColor="#3D4B66" android:pathData="M 22,100 A 10,10 0 0,1 42,100 A 10,10 0 0,1 22,100 Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M 28,100 A 4,4 0 0,1 36,100 A 4,4 0 0,1 28,100 Z"/>
+    <path android:fillColor="#3D4B66" android:pathData="M 86,100 A 10,10 0 0,1 106,100 A 10,10 0 0,1 86,100 Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M 92,100 A 4,4 0 0,1 100,100 A 4,4 0 0,1 92,100 Z"/>
+    <!-- Дека -->
+    <path android:fillColor="#FF8EA3" android:pathData="M 33.5,94 L 94.5,94 A 3.5,3.5 0 0,1 98,97.5 L 98,97.5 A 3.5,3.5 0 0,1 94.5,101 L 33.5,101 A 3.5,3.5 0 0,1 30,97.5 L 30,97.5 A 3.5,3.5 0 0,1 33.5,94 Z"/>
+    <!-- Рулевая стойка -->
+    <path android:strokeColor="#5C8EED" android:strokeWidth="6" android:strokeLineCap="round" android:pathData="M 88,96 L 72,30"/>
+    <path android:fillColor="#3D4B66" android:pathData="M 68,30 A 4,4 0 0,1 76,30 A 4,4 0 0,1 68,30 Z"/>
+    <path android:strokeColor="#FFA756" android:strokeWidth="6" android:strokeLineCap="round" android:pathData="M 60,30 L 84,30"/>
+</vector>

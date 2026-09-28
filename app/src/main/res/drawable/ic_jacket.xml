@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 30,110 A 34,7 0 0,1 98,110 A 34,7 0 0,1 30,110 Z"/>
+    <!-- Основа жилета -->
+    <path android:fillColor="#4DD0E1" android:pathData="M 36,44 L 50,30 L 78,30 L 92,44 L 96,96 L 32,96 Z"/>
+    <!-- Швы простёжки -->
+    <path android:strokeColor="#26C6DA" android:strokeWidth="3" android:pathData="M 34,58 L 94,58"/>
+    <path android:strokeColor="#26C6DA" android:strokeWidth="3" android:pathData="M 33,74 L 95,74"/>
+    <!-- Воротник -->
+    <path android:fillColor="#FFFFFF" android:pathData="M 44,32 C 40,20 88,20 84,32 C 92,36 80,44 64,44 C 48,44 36,36 44,32 Z"/>
+    <!-- Кнопки -->
+    <path android:fillColor="#FFE082" android:pathData="M 61,50 A 3,3 0 0,1 67,50 A 3,3 0 0,1 61,50 Z"/>
+    <path android:fillColor="#FFE082" android:pathData="M 61,66 A 3,3 0 0,1 67,66 A 3,3 0 0,1 61,66 Z"/>
+    <path android:fillColor="#FFE082" android:pathData="M 61,82 A 3,3 0 0,1 67,82 A 3,3 0 0,1 61,82 Z"/>
+</vector>

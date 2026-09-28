@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <!-- Палочка -->
+    <path android:strokeColor="#FFA756" android:strokeWidth="7" android:strokeLineCap="round" android:pathData="M 26,102 L 70,58"/>
+    <!-- Ниточка -->
+    <path android:strokeColor="#FF8EA3" android:strokeWidth="3" android:pathData="M 70,58 Q 85,70 92,82"/>
+    <!-- Перья -->
+    <path android:fillColor="#4DD0E1" android:pathData="M 70,58 C 75,40 95,35 105,38 C 95,50 80,55 70,58 Z"/>
+    <path android:fillColor="#FF8EA3" android:pathData="M 70,58 C 85,48 105,52 110,60 C 95,65 82,62 70,58 Z"/>
+    <path android:fillColor="#FFE082" android:pathData="M 70,58 C 65,38 80,25 90,22 C 85,38 78,50 70,58 Z"/>
+    <!-- Бубенчик -->
+    <path android:fillColor="#FFCA28" android:pathData="M 63,58 A 7,7 0 0,1 77,58 A 7,7 0 0,1 63,58 Z"/>
+</vector>

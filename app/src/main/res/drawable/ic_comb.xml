@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <group android:rotation="-30" android:pivotX="64" android:pivotY="64">
+        <path android:fillColor="#DCE5F7" android:pathData="M 44,106 A 20,6 0 0,1 84,106 A 20,6 0 0,1 44,106 Z"/>
+        <!-- Ручка -->
+        <path android:fillColor="#FF8A50" android:pathData="M 58,65 L 70,65 A 6,6 0 0,1 76,71 L 76,104 A 6,6 0 0,1 70,110 L 58,110 A 6,6 0 0,1 52,104 L 52,71 A 6,6 0 0,1 58,65 Z"/>
+        <!-- Головка щётки -->
+        <path android:fillColor="#FFA756" android:pathData="M 56,20 L 72,20 A 16,16 0 0,1 88,36 L 88,56 A 16,16 0 0,1 72,72 L 56,72 A 16,16 0 0,1 40,56 L 40,36 A 16,16 0 0,1 56,20 Z"/>
+        <!-- Подушечка -->
+        <path android:fillColor="#3D4B66" android:pathData="M 56,26 L 72,26 A 10,10 0 0,1 82,36 L 82,56 A 10,10 0 0,1 72,66 L 56,66 A 10,10 0 0,1 46,56 L 46,36 A 10,10 0 0,1 56,26 Z"/>
+        <!-- Щетинки -->
+        <path android:fillColor="#FF8EA3" android:pathData="M 51,34 A 2,2 0 0,1 55,34 A 2,2 0 0,1 51,34 Z"/>
+        <path android:fillColor="#FF8EA3" android:pathData="M 62,34 A 2,2 0 0,1 66,34 A 2,2 0 0,1 62,34 Z"/>
+        <path android:fillColor="#FF8EA3" android:pathData="M 73,34 A 2,2 0 0,1 77,34 A 2,2 0 0,1 73,34 Z"/>
+        <path android:fillColor="#FF8EA3" android:pathData="M 51,46 A 2,2 0 0,1 55,46 A 2,2 0 0,1 51,46 Z"/>
+        <path android:fillColor="#FF8EA3" android:pathData="M 62,46 A 2,2 0 0,1 66,46 A 2,2 0 0,1 62,46 Z"/>
+        <path android:fillColor="#FF8EA3" android:pathData="M 73,46 A 2,2 0 0,1 77,46 A 2,2 0 0,1 73,46 Z"/>
+    </group>
+</vector>
