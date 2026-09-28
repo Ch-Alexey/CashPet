@@ -12,6 +12,8 @@ import io.github.chalexey.cashpet.core.model.Plan
 import io.github.chalexey.cashpet.core.model.Profile
 import io.github.chalexey.cashpet.core.model.Slot
 import io.github.chalexey.cashpet.core.model.Stage
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
