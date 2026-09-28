@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 18,108 A 46,10 0 0,1 110,108 A 46,10 0 0,1 18,108 Z"/>
+    <!-- Внешний бортик -->
+    <path android:fillColor="#FFA756" android:pathData="M 16,76 A 48,26 0 0,1 112,76 A 48,26 0 0,1 16,76 Z"/>
+    <path android:fillColor="#FF8A50" android:pathData="M 16,70 A 48,24 0 0,1 112,70 A 48,24 0 0,1 16,70 Z"/>
+    <!-- Внутренняя подушка -->
+    <path android:fillColor="#FFF3E0" android:pathData="M 28,72 A 36,16 0 0,1 100,72 A 36,16 0 0,1 28,72 Z"/>
+    <path android:fillColor="#FFA756" android:pathData="M 16,70 C 16,90 112,90 112,70 C 102,96 26,96 16,70 Z"/>
+    <!-- Одеяльце -->
+    <path android:fillColor="#81D4FA" android:pathData="M 40,74 A 20,9 0 0,1 80,74 A 20,9 0 0,1 40,74 Z"/>
+</vector>

@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 20,112 A 44,6 0 0,1 108,112 A 44,6 0 0,1 20,112 Z"/>
+    <!-- Колеса -->
+    <path android:strokeColor="#3D4B66" android:strokeWidth="5" android:pathData="M 10,86 A 22,22 0 0,1 54,86 A 22,22 0 0,1 10,86 Z"/>
+    <path android:fillColor="#3D4B66" android:pathData="M 29,86 A 3,3 0 0,1 35,86 A 3,3 0 0,1 29,86 Z"/>
+    <path android:strokeColor="#3D4B66" android:strokeWidth="5" android:pathData="M 74,86 A 22,22 0 0,1 118,86 A 22,22 0 0,1 74,86 Z"/>
+    <path android:fillColor="#3D4B66" android:pathData="M 93,86 A 3,3 0 0,1 99,86 A 3,3 0 0,1 93,86 Z"/>
+    <!-- Рама -->
+    <path android:strokeColor="#5C8EED" android:strokeWidth="4" android:strokeLineJoin="round" android:pathData="M 32,86 L 54,86 L 70,60 L 38,60 Z"/>
+    <path android:strokeColor="#5C8EED" android:strokeWidth="4" android:strokeLineJoin="round" android:pathData="M 54,86 L 64,48 L 96,86"/>
+    <!-- Сиденье -->
+    <path android:fillColor="#FFA756" android:pathData="M 35,54 L 45,54 A 3,3 0 0,1 48,57 L 48,57 A 3,3 0 0,1 45,60 L 35,60 A 3,3 0 0,1 32,57 L 32,57 A 3,3 0 0,1 35,54 Z"/>
+    <!-- Корзинка -->
+    <path android:fillColor="#FFE082" android:pathData="M 93,44 L 105,44 A 3,3 0 0,1 108,47 L 108,55 A 3,3 0 0,1 105,58 L 93,58 A 3,3 0 0,1 90,55 L 90,47 A 3,3 0 0,1 93,44 Z"/>
+    <path android:strokeColor="#4C80ED" android:strokeWidth="3" android:pathData="M 92,48 C 96,44 102,48 104,48"/>
+</vector>

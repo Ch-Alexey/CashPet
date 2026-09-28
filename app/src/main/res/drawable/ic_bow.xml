@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 28,100 A 36,8 0 0,1 100,100 A 36,8 0 0,1 28,100 Z"/>
+    <!-- Левая сторона -->
+    <path android:fillColor="#FF6B8B" android:pathData="M 64,64 L 24,40 C 18,58 18,70 24,88 Z"/>
+    <path android:fillColor="#FF8EA3" android:pathData="M 64,64 L 28,46 C 24,58 24,68 28,82 Z"/>
+    <!-- Правая сторона -->
+    <path android:fillColor="#FF6B8B" android:pathData="M 64,64 L 104,40 C 110,58 110,70 104,88 Z"/>
+    <path android:fillColor="#FF8EA3" android:pathData="M 64,64 L 100,46 C 104,58 104,68 100,82 Z"/>
+    <!-- Узел -->
+    <path android:fillColor="#FFE082" android:pathData="M 61,52 L 67,52 A 7,7 0 0,1 74,59 L 74,69 A 7,7 0 0,1 67,76 L 61,76 A 7,7 0 0,1 54,69 L 54,59 A 7,7 0 0,1 61,52 Z"/>
+    <path android:fillColor="#FFB300" android:pathData="M 60,64 A 4,4 0 0,1 68,64 A 4,4 0 0,1 60,64 Z"/>
+</vector>
