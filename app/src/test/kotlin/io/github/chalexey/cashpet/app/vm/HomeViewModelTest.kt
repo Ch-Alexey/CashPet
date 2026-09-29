@@ -17,11 +17,11 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -136,10 +136,10 @@ class HomeViewModelTest {
     fun `«Завершить неделю» — неделя 2 и одноразовое событие`() = runBlocking {
         newGame()
 
-        val event = async { vm.events.first() }
         vm.closeWeek()
 
         assertEquals(2, home.weekNumber)
-        assertEquals(HomeViewModel.HomeEvent.WeekClosed, event.await())
+        // Событие ждёт в очереди, пока экран не прочтёт; тайм-аут — чтобы тест падал, а не висел
+        assertEquals(HomeViewModel.HomeEvent.WeekClosed, withTimeout(5_000) { vm.events.first() })
     }
 }
