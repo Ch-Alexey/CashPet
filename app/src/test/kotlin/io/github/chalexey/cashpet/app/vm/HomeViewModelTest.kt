@@ -12,17 +12,19 @@ import io.github.chalexey.cashpet.core.model.Plan
 import io.github.chalexey.cashpet.core.model.Profile
 import io.github.chalexey.cashpet.core.model.Slot
 import io.github.chalexey.cashpet.core.model.Stage
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -131,14 +133,13 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `«Завершить неделю» — неделя 2, событие для «Итога недели» один раз`() {
+    fun `«Завершить неделю» — неделя 2 и одноразовое событие`() = runBlocking {
         newGame()
 
+        val event = async { vm.events.first() }
         vm.closeWeek()
-        assertTrue(home.weekClosed)
-        assertEquals(2, home.weekNumber)
 
-        vm.onWeekSummaryOpened()
-        assertFalse(home.weekClosed)
+        assertEquals(2, home.weekNumber)
+        assertEquals(HomeViewModel.HomeEvent.WeekClosed, event.await())
     }
 }

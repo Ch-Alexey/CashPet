@@ -57,7 +57,6 @@ data class HomeUiState(
     val weekNumber: Int,
     val needWarning: Boolean,                // нужное на этой неделе не куплено
     val closeWarning: CloseWeekWarning?,     // что спросить перед «Завершить неделю»; null — завершать сразу
-    val weekClosed: Boolean = false,         // неделя завершена — открыть «Итог недели», потом onWeekSummaryOpened()
 )
 
 /** Мягкое предупреждение перед «Завершить неделю» (docs/01-функционал.md, раздел 4.5). Завершить можно всё равно. */

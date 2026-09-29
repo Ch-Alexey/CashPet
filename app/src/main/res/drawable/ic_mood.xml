@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path android:fillColor="#DCE5F7" android:pathData="M 30,112 A 34,7 0 0,1 98,112 A 34,7 0 0,1 30,112 Z"/>
+    <!-- Сердце -->
+    <path android:fillColor="#FF8EA3" android:pathData="M 64,100 C 30,78 18,56 18,38 C 18,20 32,10 46,10 C 54,10 60,14 64,20 C 68,14 74,10 82,10 C 96,10 110,20 110,38 C 110,56 98,78 64,100 Z"/>
+    <path android:fillColor="#FFB3C2" android:pathData="M 64,88 C 38,70 28,52 28,38 C 28,26 37,19 46,19 C 52,19 57,22 60,27 L 64,34 L 64,88 Z"/>
+    <!-- Блик -->
+    <path android:fillColor="#FFFFFF" android:pathData="M 38,32 A 10,7 0 0,1 58,28 A 6,4 0 0,1 40,36 Z"/>
+</vector>
