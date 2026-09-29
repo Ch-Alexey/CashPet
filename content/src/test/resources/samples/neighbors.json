@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "note": "Образец формата neighbors.json (docs/06-формат-контента.md). Загрузчик читает name, role и plan_tips; старые lines и strangers пропускает"
+    "note": "Образец формата neighbors.json (docs/08-контракты.md, раздел 7). Загрузчик читает name, role и plan_tips; старые lines и strangers пропускает"
   },
   "characters": {
     "toroplivy": {

@@ -1823,7 +1823,7 @@ private fun GoalCard(goal: GoalUi, weeks: Int?, canBuy: Boolean, buy: () -> Unit
             Text("🎯 ${goal.name}", style = MaterialTheme.typography.headlineMedium)
             Text("Накоплено ${goal.saved} из ${goal.cost}", color = InkSoft, modifier = Modifier.padding(top = 2.dp))
             SoftProgress(goal.saved.toFloat() / goal.cost.coerceAtLeast(1), Blue, White, 10.dp, Modifier.padding(vertical = 12.dp))
-            Text(if (weeks != null) "Примерно $weeks недель" else "Пока откладывать нечего", color = InkSoft)
+            Text(if (weeks != null) "Примерно $weeks ${weeksWord(weeks)}" else "Срок появится после первой недели с копилкой", color = InkSoft)
             if (canBuy) PrimaryButton("Купить мечту", buy, modifier = Modifier.padding(top = 10.dp))
         }
     }
@@ -1996,4 +1996,12 @@ private fun rejectionText(r: Rejection) = when (r) {
     Rejection.TaskClosed -> "Это задание пока недоступно."
     Rejection.InvalidAmount -> "Сумма должна быть положительной и кратной 5."
     is Rejection.UnknownId -> "Элемент не найден."
+}
+
+// «1 неделя», «3 недели», «5 недель» — срок до мечты в Копилке
+private fun weeksWord(n: Int): String = when {
+    n % 100 in 11..14 -> "недель"
+    n % 10 == 1 -> "неделя"
+    n % 10 in 2..4 -> "недели"
+    else -> "недель"
 }
