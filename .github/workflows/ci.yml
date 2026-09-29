@@ -21,7 +21,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
 
       - name: Тесты и сборка APK
-        run: ./gradlew assembleDebug -x test --console=plain
+        run: ./gradlew test assembleDebug --console=plain
 
       - name: Отчёты тестов
         if: failure()

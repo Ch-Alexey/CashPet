@@ -12,12 +12,12 @@ import io.github.chalexey.cashpet.core.engine.Action
 import io.github.chalexey.cashpet.core.engine.GameEngine
 import io.github.chalexey.cashpet.core.engine.Result
 import io.github.chalexey.cashpet.core.model.GameState
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -31,8 +31,10 @@ class HomeViewModel(
     private val store: GameStore,
 ) : ViewModel() {
 
-    private val _events = MutableSharedFlow<HomeEvent>(extraBufferCapacity = 1)
-    val events: SharedFlow<HomeEvent> = _events.asSharedFlow()
+    // Channel, а не SharedFlow: событие ждёт, пока экран его прочтёт (поворот, экран ещё не подписан),
+    // и достаётся ровно одному читателю — «Итог недели» не откроется дважды и не потеряется
+    private val _events = Channel<HomeEvent>(Channel.BUFFERED)
+    val events: Flow<HomeEvent> = _events.receiveAsFlow()
     private var closingWeek = false
 
     val uiState: StateFlow<HomeUiState?> = store.state
@@ -46,7 +48,7 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 if (store.dispatch(Action.CloseWeek) is Result.Ok) {
-                    _events.emit(HomeEvent.WeekClosed)
+                    _events.send(HomeEvent.WeekClosed)
                 }
             } finally {
                 closingWeek = false
